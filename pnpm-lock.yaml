@@ -31,7 +31,6 @@ specifiers:
   eslint-config-prettier: ^8.8.0
   eslint-plugin-prettier: ^4.2.1
   eslint-plugin-vue: ^8.7.1
-  eventsource-parser: ^1.0.0
   globby: ^13.1.4
   highlight.js: ^11.8.0
   http-server: ^14.1.1
@@ -65,7 +64,6 @@ dependencies:
   '@lit/localize': 0.11.4
   '@shoelace-style/shoelace': 2.4.0
   '@unocss/reset': 0.52.4
-  eventsource-parser: 1.0.0
   highlight.js: 11.8.0
   ky: 0.33.3
   lit: 2.7.4
@@ -3792,11 +3790,6 @@ packages:
   /eventemitter3/4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
     dev: true
-
-  /eventsource-parser/1.0.0:
-    resolution: {integrity: sha512-9jgfSCa3dmEme2ES3mPByGXfgZ87VbP97tng1G2nWwWx6bV2nYxm2AWCrbQjXToSe+yYlqaZNtxffR9IeQr95g==}
-    engines: {node: '>=14.18'}
-    dev: false
 
   /execa/5.1.1:
     resolution: {integrity: sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==}
