@@ -1,4 +1,4 @@
-name: Publish Docs Deploy
+name: Deploy
 
 on:
     push:
@@ -8,7 +8,8 @@ on:
             - v*.*
 
 jobs:
-    deploy-docs:
+    deploy:
+        name: deploy
         runs-on: ubuntu-latest
 
         strategy:
@@ -59,7 +60,7 @@ jobs:
             #       git-config-email: yuga_sun@163.com
             #       commit-message: website deploy
 
-            # - name: Deploy
+            # - name: Deploy to vercel
             #   uses: amondnet/vercel-action@v20
             #   with:
             #       vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
