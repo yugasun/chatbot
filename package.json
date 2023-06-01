@@ -1,0 +1,122 @@
+{
+  "name": "@yugasun/chatbot",
+  "version": "0.1.0",
+  "description": "Web component template using LitElement with TypeScript + Vite",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc && pnpm run copy:dist",
+    "copy:dist": "cp -r ./dist ./demo",
+    "demo": "http-server demo -o",
+    "lint": "pnpm run lint:lit-analyzer && pnpm run lint:eslint",
+    "lint:eslint": "eslint 'src/**/*.ts' --fix",
+    "lint:lit-analyzer": "lit-analyzer",
+    "prettier": "prettier --write --ignore-unknown '**/*'",
+    "test": "web-test-runner --group default",
+    "test:component": "web-test-runner -- --watch --group",
+    "test:watch": "web-test-runner --watch --group default",
+    "commit": "git-cz",
+    "prepare": "husky install && pnpm build"
+  },
+  "keywords": [
+    "chatbot",
+    "chatgpt",
+    "aigc",
+    "ai",
+    "bot",
+    "web-component",
+    "lit",
+    "lit-element",
+    "typescript",
+    "vite",
+    "unocss",
+    "template",
+    "starter",
+    "boilerplate"
+  ],
+  "main": "dist/index.es.js",
+  "module": "dist/index.es.js",
+  "exports": {
+    ".": "./dist/index.es.js"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
+  "author": "yugasun",
+  "license": "MIT",
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.3",
+    "@commitlint/config-conventional": "^17.6.3",
+    "@custom-elements-manifest/analyzer": "^0.8.3",
+    "@lit/localize-tools": "^0.6.9",
+    "@open-wc/testing": "^3.1.8",
+    "@rollup/plugin-replace": "^4.0.0",
+    "@types/markdown-it": "^12.2.3",
+    "@types/markdown-it-link-attributes": "^3.0.1",
+    "@types/marked": "^5.0.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^17.0.45",
+    "@types/sanitize-html": "^2.9.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.7",
+    "@typescript-eslint/parser": "^5.59.7",
+    "@web/dev-server-esbuild": "^0.4.1",
+    "@web/test-runner": "^0.16.1",
+    "@web/test-runner-commands": "^0.7.0",
+    "autoprefixer": "^10.4.14",
+    "commitizen": "^4.3.0",
+    "commitlint-config-cz": "^0.13.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "cz-customizable": "^6.9.2",
+    "eslint": "^8.41.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-vue": "^8.7.1",
+    "globby": "^13.1.4",
+    "http-server": "^14.1.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^12.5.0",
+    "lit-analyzer": "^1.2.1",
+    "postcss": "^8.4.24",
+    "prettier": "^2.8.8",
+    "rollup": "^2.79.1",
+    "stylelint": "^14.16.1",
+    "stylelint-config-prettier": "^9.0.5",
+    "stylelint-config-standard": "^25.0.0",
+    "stylelint-config-standard-scss": "^4.0.0",
+    "tailwindcss": "^3.3.2",
+    "ts-lit-plugin": "^1.2.1",
+    "typescript": "^4.9.5",
+    "unocss": "^0.50.8",
+    "vite": "^3.2.7",
+    "vite-plugin-css-injected-by-js": "^3.1.1",
+    "vite-plugin-html": "^3.2.0",
+    "vite-plugin-inspect": "^0.7.28",
+    "vite-plugin-static-copy": "^0.15.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": "./.cz-config.js"
+    }
+  },
+  "packageManager": "pnpm@7.11.0",
+  "engines": {
+    "node": ">=16.0.0",
+    "pnpm": ">=7.11.0"
+  },
+  "dependencies": {
+    "@lit-app/state": "^0.8.4",
+    "@lit/localize": "^0.11.4",
+    "@shoelace-style/shoelace": "^2.4.0",
+    "@unocss/reset": "^0.52.4",
+    "highlight.js": "^11.8.0",
+    "ky": "^0.33.3",
+    "lit": "^2.7.4",
+    "markdown-it": "^13.0.1",
+    "markdown-it-link-attributes": "^4.0.1",
+    "nanoid": "^4.0.2"
+  }
+}
