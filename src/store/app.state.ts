@@ -27,8 +27,11 @@ class AppState extends State {
     @property({
         type: Object,
         value: {
+            model: 'gpt-3.5-turbo',
             stream: false,
             maxContextLength: 20,
+            customRequest: false,
+            uploadFileUrl: '',
             openai: {
                 apiKey: '',
             },
@@ -64,7 +67,11 @@ class AppState extends State {
     }
 
     // update message
-    updateMessage(message: Chatbot.Message) {
+    updateMessage(message: Chatbot.Message, text?: string) {
+        message.isThinking = false;
+        if (text) {
+            message.data.text = text;
+        }
         this.messages = this.messages.map((m) => {
             if (m.id === message.id) {
                 return message;
@@ -79,7 +86,7 @@ class AppState extends State {
     }
 
     // clear messages
-    clearMessage() {
+    clearMessages() {
         this.messages = [];
     }
 }

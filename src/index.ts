@@ -9,24 +9,22 @@ import './components/message-list/message-list';
 import './components/user-input/user-input';
 import './components/setting/setting';
 import './components/anchor/anchor';
+import './components/common/thinking/thinking';
 
 import { appState } from './store/app.state';
 import { ChatbotElement } from './common/chatbot-element';
 
 import * as openai from './service/openai';
 import { uuid } from './utils';
+import { fetchStream } from './utils/request';
+import { uploadFile } from './service/server';
 
-/**
- * An example element.
- *
- * @slot - This element has a slot
- * @csspart button - The button
- */
 @customElement('chat-bot')
 export default class ChatBot extends ChatbotElement {
     static styles = styles;
 
-    private state = new StateController(this, appState);
+    // @ts-ignore
+    private store = new StateController(this, appState);
 
     // display license
     @property({ type: Boolean, attribute: 'display-license' })
@@ -44,6 +42,18 @@ export default class ChatBot extends ChatbotElement {
     @property({ type: Boolean, attribute: 'stream' })
     stream = false;
 
+    // custom request
+    @property({ type: Boolean, attribute: 'custom-request' })
+    customRequest = false;
+
+    // custom upload file url
+    @property({ type: String, attribute: 'upload-file-url' })
+    uploadFileUrl = '';
+
+    // open flag
+    @property({ type: Boolean, attribute: true })
+    open = false;
+
     // loading flag
     @property({ type: Boolean })
     loading = false;
@@ -52,12 +62,16 @@ export default class ChatBot extends ChatbotElement {
     @property({ type: Boolean })
     showSetting = false;
 
-    // open flag
-    @property({ type: Boolean, attribute: true })
-    open = false;
-
     @query('cb-message-list')
     private _messageList: HTMLElement;
+
+    /**
+     * decodeStreamData
+     */
+    public decodeStreamData(data: Uint8Array) {
+        const decoder = new TextDecoder();
+        return decoder.decode(data);
+    }
 
     render() {
         return html`
@@ -114,6 +128,74 @@ export default class ChatBot extends ChatbotElement {
             const detail = (event as CustomEvent).detail;
             this.open = detail.open;
         });
+
+        // listen clear cache
+        addEventListener('message:clear', () => {
+            appState.clearMessages();
+        });
+
+        // listen send file
+        addEventListener('message:send:file', async (event: Event) => {
+            const detail = (event as CustomEvent).detail as {
+                files: File[];
+            };
+            console.log('detail', detail);
+
+            // add file message
+            const uploadFileInfos = detail.files.map((file, index) => {
+                return {
+                    id: `${file.name}-${index}`,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    url: '',
+                };
+            });
+            const newMsg: Chatbot.Message = {
+                id: uuid(),
+                author: 'user',
+                type: 'file',
+                isUploading: true,
+                data: {
+                    files: uploadFileInfos,
+                },
+            };
+
+            console.log('newMsg', newMsg);
+
+            appState.addMessage(newMsg);
+
+            if (this.uploadFileUrl) {
+                // upload file to server
+                const res = await uploadFile(this.uploadFileUrl, detail.files);
+                console.log('res', res);
+                if (res.code === 0 && res.data) {
+                    newMsg.isUploading = false;
+                    newMsg.data = {
+                        files: res.data,
+                    };
+
+                    appState.updateMessage(newMsg);
+                }
+            }
+
+            this.emit('chatbot:file:send', {
+                detail: {
+                    files: detail.files,
+                    message: newMsg,
+                },
+            });
+        });
+    }
+
+    // initialize setting
+    private _initSetting() {
+        const setting = appState.setting;
+        setting.stream = this.stream;
+        setting.customRequest = this.customRequest;
+        setting.uploadFileUrl = this.uploadFileUrl;
+
+        appState.setSetting(setting);
     }
 
     // setting confirm handler
@@ -141,6 +223,9 @@ export default class ChatBot extends ChatbotElement {
 
         // check auth setting
         this._checkAuth();
+
+        // init setting
+        this._initSetting();
     }
 
     // check auth
@@ -154,6 +239,41 @@ export default class ChatBot extends ChatbotElement {
         this.loading = val;
     }
 
+    // send to openai
+    private async _sendToOpenai(
+        newMsg: Chatbot.Message,
+        messages: Chatbot.OpenaiMessage[],
+    ) {
+        let text = '';
+        const data = await openai.chat({
+            apiKey: appState.setting.openai.apiKey,
+            messages: messages,
+            options: {
+                stream: appState.setting.stream,
+                model: appState.setting.model,
+                // temperature: 0.9,
+            },
+            onMessage: (err, data) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                if (data && data.choices[0].delta?.content) {
+                    requestIdleCallback(() => {
+                        // handle openai response
+                        text += data.choices[0].delta.content;
+                        // update message
+                        appState.updateMessage(newMsg, text);
+                    });
+                }
+            },
+        });
+        if (!appState.setting.stream && data) {
+            // update message
+            appState.updateMessage(newMsg, data.choices[0].message.content);
+        }
+    }
+
     // send to bot service
     private async _sendHandler(messages: Chatbot.OpenaiMessage[]) {
         this.setLoading(true);
@@ -162,43 +282,26 @@ export default class ChatBot extends ChatbotElement {
             id: uuid(),
             author: 'bot',
             type: 'text',
-            data: {
-                text: '...',
-            },
+            isThinking: true,
+            data: {},
         };
 
-        // add message to state
+        // add message to store
         appState.addMessage(newMsg);
 
-        let text = '';
-        const data = await openai.chat({
-            apiKey: appState.setting.openai.apiKey,
-            messages: messages,
-            options: {
-                stream: this.stream,
-                model: 'gpt-3.5-turbo',
-                // temperature: 0.9,
-            },
-            onMessage: (err, data) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-                // console.log('data', data);
-                if (data) {
-                    // handle openai response
-                    text += data.choices[0].delta.content;
-                    newMsg.data.text = text;
-                    // update message
-                    appState.updateMessage(newMsg);
-                }
-            },
-        });
-        if (!this.stream && data) {
-            newMsg.data.text = data.choices[0].message.content;
-            // update message
-            appState.updateMessage(newMsg);
+        if (this.customRequest) {
+            const data = await this.emit('chatbot:send', {
+                detail: {
+                    newMessage: newMsg,
+                    messages,
+                },
+                bubbles: true,
+                composed: true,
+            });
+            this.setLoading(false);
+            return data;
         }
+        await this._sendToOpenai(newMsg, messages);
 
         this.setLoading(false);
     }
@@ -226,6 +329,9 @@ export default class ChatBot extends ChatbotElement {
         const detail = (event as CustomEvent).detail;
         appState.removeMessage(detail.id);
     }
+
+    // fetch sse stream
+    public fetchStream = fetchStream;
 }
 
 declare global {

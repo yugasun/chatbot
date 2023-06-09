@@ -82,8 +82,8 @@ export async function chat(params: {
         throw new Error('No data');
     }
 
-    if (params.options?.stream) {
-        await parseOpenaiResponse(data, params.onMessage!);
+    if (params.options?.stream && params.onMessage) {
+        await parseOpenaiResponse(data, params.onMessage);
         return;
     }
     return response.json();

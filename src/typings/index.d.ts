@@ -34,7 +34,12 @@ declare namespace Chatbot {
         id: string;
         author: MessageAuthor;
         type: MessageType;
-        data: Record<string, string>;
+        isThinking?: boolean;
+        isUploading?: boolean;
+        data: {
+            text?: string;
+            files?: UploadFileItem[];
+        };
     }
 
     interface OpenAISetting {
@@ -43,7 +48,7 @@ declare namespace Chatbot {
         temperature?: number;
         topP?: number;
 
-        [prop: string]: any;
+        [prop: string]: unknown;
     }
 
     interface AigcaasSetting {
@@ -52,7 +57,10 @@ declare namespace Chatbot {
     }
 
     interface Setting {
+        model: string;
         stream: boolean;
+        customRequest: boolean;
+        uploadFileUrl: string;
         maxContextLength: number;
         openai: OpenAISetting;
         aigcaas: AigcaasSetting;
@@ -61,4 +69,28 @@ declare namespace Chatbot {
     }
 
     type SettingKey = keyof Setting;
+
+    // upload file item
+    interface UploadFileItem {
+        id: string;
+        // filename
+        name: string;
+        // file url
+        url: string;
+    }
+
+    // upload file response
+    interface UploadFileResponse {
+        // response code: 0 success, 1 error
+        code: number;
+        // upload file url
+        url: string;
+        // error message
+        message: string;
+
+        data?: UploadFileItem[];
+
+        // extra fields
+        [prop: string]: unknown;
+    }
 }

@@ -61,18 +61,21 @@ export async function chat(params: {
     if (!params.apiKey) {
         throw new Error('apiKey is required');
     }
-    const response = await request.post(getFullUrl('/api/chat/completions'), {
-        json: {
-            messages: params.messages,
-            ...(params.options ?? {}),
+    const response = await request.post(
+        getFullUrl('/openai/chat/completions'),
+        {
+            json: {
+                messages: params.messages,
+                ...(params.options ?? {}),
+            },
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${params.apiKey}`,
+            },
+            timeout: 1000 * 60 * 10,
+            signal: params.signal,
         },
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${params.apiKey}`,
-        },
-        timeout: 1000 * 60 * 10,
-        signal: params.signal,
-    });
+    );
 
     const data = response.body;
     if (!data) {

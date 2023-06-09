@@ -3,18 +3,18 @@ export default css`
     :host {
         // width: 380px;
 
-        --label-width: 5rem;
+        --label-width: 7.6rem;
     }
 
-    sl-dialog.cb-dialog {
-        // --width: 380px;
-    }
+    // sl-dialog.cb-dialog {
+    //     --width: 380px;
+    // }
 
-    sl-dialog::part(base) {
-        // justify-content: flex-end;
-    }
-    sl-dialog::part(panel) {
-    }
+    // sl-dialog::part(base) {
+    //     justify-content: flex-end;
+    // }
+    // sl-dialog::part(panel) {
+    // }
 
     .form-item {
         margin-bottom: var(--sl-spacing-medium);
@@ -26,6 +26,10 @@ export default css`
 
     .form-item .label {
         width: var(--label-width);
+    }
+
+    .form-item sl-input {
+        flex: 1;
     }
 
     .setting-input {

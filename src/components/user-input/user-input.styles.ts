@@ -28,4 +28,16 @@ export default css`
     .send-button {
         font-size: 1.5rem;
     }
+
+    .paperclip-button {
+        font-size: 1.5rem;
+        position: relative;
+    }
+
+    .file-input {
+        visibility: hidden;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
 `;

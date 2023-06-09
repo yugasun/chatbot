@@ -14,8 +14,16 @@ import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
 import '@shoelace-style/shoelace/dist/components/tab/tab.js';
 import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
 import '@shoelace-style/shoelace/dist/components/radio/radio.js';
+// radio group
+import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
+// radio button
+import '@shoelace-style/shoelace/dist/components/radio-button/radio-button.js';
 // switch
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
+// tooltip
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
+// spinner
+import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
 
 import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
 

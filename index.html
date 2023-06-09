@@ -22,8 +22,51 @@
 
     <body>
         <script type="module" src="/src/index.ts"></script>
-        <chat-bot name="<%- title %>" stream>
-            <p slot="content">Loading</p>
+        <chat-bot
+            name="<%- title %>"
+            stream
+            custom-request
+            upload-file-url="http://localhost:8000/api/v1/file/upload"
+        >
+            <h3>Loading...</h3>
         </chat-bot>
+
+        <script>
+            window.addEventListener('load', () => {
+                const chatBot = document.querySelector('chat-bot');
+                const chatBotState = chatBot.store.state;
+
+                let text = '';
+                chatBot.addEventListener('chatbot:send', (e) => {
+                    console.log(e.detail);
+                    const { messages, newMessage } = e.detail;
+                    if (!messages || !messages[0] || !newMessage) return;
+                    chatBot.fetchStream(`/api/v1/chat/qa`, {
+                        method: 'POST',
+                        headers: {
+                            accept: 'text/event-stream',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ text: messages[0].content }),
+                        onmessage: (res) => {
+                            const data = chatBot.decodeStreamData(res);
+                            text += data;
+                            /*
+                            // add to chatbot message
+                            */
+                            chatBotState.updateMessage(newMessage, text);
+                        },
+                        onclose: () => {
+                            console.log('close', text);
+                            text = '';
+                        },
+                    });
+                });
+
+                chatBot.addEventListener('chatbot:send:file', (e) => {
+                    console.log(e.detail);
+                });
+            });
+        </script>
     </body>
 </html>

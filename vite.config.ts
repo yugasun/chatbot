@@ -82,11 +82,16 @@ export default ({ mode }) => {
                 ignored: ['**/demo/**'],
             },
             proxy: {
-                '/api': {
+                '/openai': {
                     // target: 'https://api.openai.com/v1/',
                     target: process.env.VITE_OPENAI_BASE_URL,
                     changeOrigin: true,
-                    rewrite: (path) => path.replace(/^\/api/, ''),
+                    rewrite: (path) => path.replace(/^\/openai/, ''),
+                },
+                '/api/v1': {
+                    // target: 'https://api.openai.com/v1/',
+                    target: process.env.VITE_QABOT_BASE_URL,
+                    changeOrigin: true,
                 },
             },
         },

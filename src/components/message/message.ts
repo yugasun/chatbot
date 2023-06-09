@@ -1,6 +1,14 @@
 import { html } from 'lit';
 import { customElement, property, queryAll } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { when } from 'lit/directives/when.js';
+import { repeat } from 'lit/directives/repeat.js';
+
 import { ChatbotElement } from '../../common/chatbot-element';
+import '../common/thinking/thinking';
+import '../common/uploading/uploading';
+import '../file/file';
+
 import styles from './message.styles';
 import { parse } from '../../utils/markdown';
 import { copyToClipboard } from '../../utils';
@@ -67,20 +75,24 @@ export class Message extends ChatbotElement {
     }
 
     render() {
-        return this.message.data?.text
-            ? html`
-                  <div class="cb-message-row" part="cb-message-row">
-                      <!-- message -->
-                      ${this.message?.author === 'bot'
-                          ? this.renderBotMessage(this.message)
-                          : this.renderUserMessage(this.message)}
-                  </div>
-              `
-            : '';
+        return when(
+            this.message.data || this.message.isThinking,
+            () => html`
+                <div class="cb-message-row" part="cb-message-row">
+                    <!-- message -->
+                    ${when(
+                        this.message?.author === 'bot',
+                        () => this.renderBotMessage(this.message),
+                        () => this.renderUserMessage(this.message),
+                    )}
+                </div>
+            `,
+            () => null,
+        );
     }
 
     renderButtons(direct = 'left') {
-        return html` <div class="cb-message__buttons ${direct}">
+        return html`<div class="cb-message__buttons ${direct}">
             <!-- delete button -->
             <sl-icon-button
                 class="cb-message__delete-button"
@@ -92,11 +104,49 @@ export class Message extends ChatbotElement {
 
     renderMessage(type: Chatbot.MessageAuthor, message: Chatbot.Message) {
         return html`
-            <p class="cb-message__content ${type}-message markdown-body">
+            <div
+                class="
+                    cb-message__content
+                    ${type}-message
+                    message-type-${message.type}
+                    ${message.isThinking ? 'thinking' : ''}
+                    "
+            >
                 ${this.renderButtons(type === 'bot' ? 'right' : 'left')}
-                ${parse(message.data.text)}
-            </p>
+                ${this.renderMessageContent(message)}
+            </div>
         `;
+    }
+
+    renderMessageContent(message: Chatbot.Message) {
+        if (message.isThinking) {
+            return html`<cb-thinking></cb-thinking>`;
+        }
+        if (message.isUploading) {
+            return html`<cb-uploading
+                .files="${message.data.files || []}"
+            ></cb-uploading>`;
+        }
+        if (message.type === 'text') {
+            return html`<div class="cb-message-text">
+                ${parse(message.data.text!)}
+            </div>`;
+        }
+        if (message.type === 'file') {
+            return html`${repeat(
+                message.data.files || [],
+                (file) => file.id,
+                (file) => {
+                    return html`<cb-file
+                        filename="${file.name}"
+                        url="${file.url}"
+                    ></cb-file>`;
+                },
+            )}`;
+        }
+        return html`<div class="cb-message-text">
+            ${parse(message.data.text?.toString() || '')}
+        </div>`;
     }
 
     renderBotMessage(message: Chatbot.Message) {

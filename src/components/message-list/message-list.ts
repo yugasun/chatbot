@@ -1,5 +1,6 @@
-import { TemplateResult, html } from 'lit';
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
 
 import styles from './message-list.styles';
 import '../message/message';
@@ -9,20 +10,21 @@ import { ChatbotElement } from '../../common/chatbot-element';
 export class MessageList extends ChatbotElement {
     static styles = styles;
 
-    @property({ type: Array, attribute: true })
+    @property({ type: Array })
     messages: Chatbot.Message[] = [];
 
     render() {
-        const msgNodes: TemplateResult[] = [];
-        this.messages.forEach((message) => {
-            msgNodes.push(
-                html`<cb-message .message="${message}"></cb-message>`,
-            );
-        });
-
         return html`
             <div class="cb-message-list" part="cb-message-list">
-                ${msgNodes}
+                ${repeat(
+                    this.messages,
+                    (message) => message.id + JSON.stringify(message.data),
+                    (message) => {
+                        return html`<cb-message
+                            .message="${message}"
+                        ></cb-message>`;
+                    },
+                )}
             </div>
         `;
     }

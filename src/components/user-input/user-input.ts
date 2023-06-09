@@ -3,6 +3,7 @@ import { customElement, property, query } from 'lit/decorators.js';
 
 import styles from './user-input.styles';
 import { ChatbotElement } from '../../common/chatbot-element';
+import { selectFile } from '../../utils';
 
 @customElement('cb-user-input')
 export class UserInput extends ChatbotElement {
@@ -51,6 +52,16 @@ export class UserInput extends ChatbotElement {
         this.inputElement.blur();
     }
 
+    private async _sendFileHandler() {
+        const files = await selectFile();
+
+        this.emit('message:send:file', {
+            detail: {
+                files,
+            },
+        });
+    }
+
     render() {
         return html`
             <div class="user-input-wrapper" part="user-input-wrapper">
@@ -66,10 +77,26 @@ export class UserInput extends ChatbotElement {
                     enterkeyhint="send"
                     @keydown=${this._keyDownHandler}
                 ></sl-textarea>
+
+                <sl-icon-button
+                    @click=${this._sendFileHandler}
+                    name="paperclip"
+                    label="Attachment"
+                    size="large"
+                    class="paperclip-button"
+                >
+                    <!-- select file input -->
+                    <input
+                        type="file"
+                        id="file"
+                        name="file"
+                        class="file-input"
+                    />
+                </sl-icon-button>
                 <sl-icon-button
                     @click=${this._sendHandler}
                     name="send"
-                    label="Edit"
+                    label="Send"
                     size="large"
                     class="send-button"
                 ></sl-icon-button>

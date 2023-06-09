@@ -1,6 +1,8 @@
 import { PropertyValueMap, html } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
 import { ChatbotElement } from '../../common/chatbot-element';
+import './clear-message.dialog';
 
 import styles from './setting.styles';
 
@@ -8,95 +10,166 @@ import styles from './setting.styles';
 export class SettingElement extends ChatbotElement {
     static styles = styles;
 
-    @property({ type: Boolean, attribute: 'open' })
+    @property({ type: Boolean })
     open = false;
 
     @property({ type: Object })
     setting: Chatbot.Setting;
 
+    // control clear message dialog flag
+    @property({ type: Boolean })
+    clearMessageDialogOpen = false;
+
     @query('sl-dialog')
     dialog: HTMLElement;
 
+    // enable custom request
+    @property({ type: Boolean })
+    customRequest = false;
+
     render() {
-        return html`<sl-dialog
-            label="Setting"
-            class="cb-dialog"
-            ?open=${this.open}
-            @sl-hide=${this._settingCancelHandler}
-        >
-            <form>
-                <sl-tab-group>
-                    <sl-tab slot="nav" panel="openai">OpenAI</sl-tab>
-                    <!-- TODO: support aigcaas -->
-                    <sl-tab slot="nav" panel="aigcaas" disabled>AIGCaaS</sl-tab>
+        this.customRequest = this.setting.customRequest;
 
-                    <sl-tab-panel name="openai">
-                        <sl-input
-                            autofocus
-                            name="openai.apiKey"
-                            value=${this.setting.openai.apiKey}
-                            placeholder="Please input api key for openai"
-                            @sl-change=${this._inputChangeHandler}
-                        ></sl-input>
-                    </sl-tab-panel>
-                    <sl-tab-panel name="aigcaas">
-                        <sl-input
-                            autofocus
-                            name="aigcaas.secretId"
-                            value=${this.setting.aigcaas.secretId}
-                            placeholder="Please input secret id for aigcaas"
-                            @sl-change=${this._inputChangeHandler}
-                        ></sl-input>
-                        <sl-input
-                            autofocus
-                            name="aigcaas.secretKey"
-                            value=${this.setting.aigcaas.secretKey}
-                            placeholder="Please input secret key for aigcaas"
-                            @sl-change=${this._inputChangeHandler}
-                        ></sl-input>
-                    </sl-tab-panel>
-                </sl-tab-group>
+        return html` <!-- clear message dialog -->
+            <cb-clear-message-dialog
+                .open=${this.clearMessageDialogOpen}
+                @confirm=${this._clearCacheHandler}
+                @cancel=${() => {
+                    this.clearMessageDialogOpen = false;
+                }}
+            ></cb-clear-message-dialog>
+            <sl-dialog
+                label="Setting"
+                class="cb-dialog"
+                ?open=${this.open}
+                @sl-hide=${this._settingCancelHandler}
+            >
+                <form>
+                    <div class="form-item">
+                        <label class="label">Clear Cache</label>
+                        <sl-button
+                            variant="danger"
+                            size="small"
+                            @click=${() => {
+                                this.clearMessageDialogOpen = true;
+                            }}
+                        >
+                            Clear
+                        </sl-button>
+                    </div>
+                    <div class="form-item">
+                        <label class="label"> Custom Request </label>
 
-                <div class="form-item">
-                    <label class="label">Streaming</label>
-                    <sl-switch
-                        class="item"
-                        label="Stream"
-                        name="stream"
-                        ?checked="${this.setting.stream}"
-                        @sl-change=${this._checkChangeHandler}
-                    ></sl-switch>
-                </div>
-                <div class="form-item">
-                    <label class="label">Context</label>
+                        <sl-switch
+                            class="item"
+                            label="Custom Request"
+                            name="customRequest"
+                            ?checked="${this.setting.customRequest}"
+                            @sl-change=${this._checkChangeHandler}
+                        >
+                            Enable it for your own backend.
+                        </sl-switch>
+                    </div>
+                    ${when(
+                        this.customRequest,
+                        () => null,
+                        () => this.renderInternalServices(),
+                    )}
+
+                    <div class="form-item">
+                        <label class="label">Streaming</label>
+                        <sl-switch
+                            class="item"
+                            label="Stream"
+                            name="stream"
+                            ?checked="${this.setting.stream}"
+                            @sl-change=${this._checkChangeHandler}
+                        ></sl-switch>
+                    </div>
+                    <div class="form-item">
+                        <label class="label">Context</label>
+                        <sl-input
+                            size="small"
+                            type="number"
+                            name="maxContextLength"
+                            value=${this.setting.maxContextLength}
+                            placeholder="Number of consecutive sessions"
+                        ></sl-input>
+                    </div>
+                </form>
+
+                <sl-button
+                    slot="footer"
+                    variant="primary"
+                    @click=${this._settingConfirmHandler}
+                >
+                    Confirm
+                </sl-button>
+                <sl-button
+                    slot="footer"
+                    variant="default"
+                    @click=${this._settingCancelHandler}
+                    >Cancel</sl-button
+                >
+            </sl-dialog>`;
+    }
+
+    renderInternalServices() {
+        return html`
+            <div class="form-item">
+                <label class="label">Service</label>
+                <sl-radio-group name="openai" value="openai" size="small">
+                    <sl-radio-button value="openai">OpenAI</sl-radio-button>
+                    <sl-radio-button value="aigcaas" disabled>
+                        AIGCaaS
+                    </sl-radio-button>
+                </sl-radio-group>
+            </div>
+
+            <div class="form-item">
+                <label class="label">API Key</label>
+                <sl-input
+                    autofocus
+                    size="small"
+                    name="openai.apiKey"
+                    value=${this.setting.openai.apiKey}
+                    placeholder="Please input api key for openai"
+                    @sl-change=${this._inputChangeHandler}
+                ></sl-input>
+            </div>
+
+            <!-- TODO: support aigcaas -->
+            <!-- <div class="form-item">
+                    <label class="label">AIGCaaS</label>
                     <sl-input
-                        class="item setting-input"
-                        type="number"
-                        name="maxContextLength"
-                        value=${this.setting.maxContextLength}
-                        placeholder="Number of consecutive sessions"
+                        autofocus
+                        size="small"
+                        name="aigcaas.secretId"
+                        value=${this.setting.aigcaas.secretId}
+                        placeholder="Please input secret id for aigcaas"
+                        @sl-change=${this._inputChangeHandler}
                     ></sl-input>
-                </div>
-            </form>
+                    <sl-input
+                        autofocus
+                        size="small"
+                        name="aigcaas.secretKey"
+                        value=${this.setting.aigcaas.secretKey}
+                        placeholder="Please input secret key for aigcaas"
+                        @sl-change=${this._inputChangeHandler}
+                    ></sl-input>
+                </div> -->
+        `;
+    }
 
-            <sl-button
-                slot="footer"
-                variant="primary"
-                @click=${this._settingConfirmHandler}
-            >
-                Confirm
-            </sl-button>
-            <sl-button
-                slot="footer"
-                variant="default"
-                @click=${this._settingCancelHandler}
-                >Cancel</sl-button
-            >
-        </sl-dialog>`;
+    // clear message cache handler
+    private _clearCacheHandler() {
+        this.emit('message:clear');
+
+        this.clearMessageDialogOpen = false;
     }
 
     // input change handler
-    _inputChangeHandler(e: Event) {
+    private _inputChangeHandler(e: Event) {
         const { name, value } = e.target as HTMLInputElement;
         const [key, subKey] = name.split('.') as [Chatbot.SettingKey, string];
         if (subKey) {
@@ -107,13 +180,17 @@ export class SettingElement extends ChatbotElement {
     }
 
     // checked change handler
-    _checkChangeHandler(e: Event) {
+    private _checkChangeHandler(e: Event) {
         const { name, checked } = e.target as HTMLInputElement;
         const [key, subKey] = name.split('.') as [Chatbot.SettingKey, string];
         if (subKey) {
             this.setting[key][subKey] = checked;
         } else {
             this.setting[key] = checked;
+        }
+
+        if (key === 'customRequest') {
+            this.customRequest = checked;
         }
     }
 

@@ -22,6 +22,10 @@ export default css`
         box-sizing: border-box;
     }
 
+    .cb-message__content.thinking {
+        max-width: 5rem;
+    }
+
     .cb-message__content:hover .cb-message__buttons {
         z-index: 1;
     }
@@ -94,5 +98,10 @@ export default css`
 
     sl-avatar.small {
         --size: 2.5rem;
+    }
+
+    .cb-message-text p {
+        padding: 0;
+        margin: 0;
     }
 `;
