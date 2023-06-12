@@ -120,9 +120,6 @@ export class SettingElement extends ChatbotElement {
                 <label class="label">Service</label>
                 <sl-radio-group name="openai" value="openai" size="small">
                     <sl-radio-button value="openai">OpenAI</sl-radio-button>
-                    <sl-radio-button value="aigcaas" disabled>
-                        AIGCaaS
-                    </sl-radio-button>
                 </sl-radio-group>
             </div>
 
@@ -137,27 +134,6 @@ export class SettingElement extends ChatbotElement {
                     @sl-change=${this._inputChangeHandler}
                 ></sl-input>
             </div>
-
-            <!-- TODO: support aigcaas -->
-            <!-- <div class="form-item">
-                    <label class="label">AIGCaaS</label>
-                    <sl-input
-                        autofocus
-                        size="small"
-                        name="aigcaas.secretId"
-                        value=${this.setting.aigcaas.secretId}
-                        placeholder="Please input secret id for aigcaas"
-                        @sl-change=${this._inputChangeHandler}
-                    ></sl-input>
-                    <sl-input
-                        autofocus
-                        size="small"
-                        name="aigcaas.secretKey"
-                        value=${this.setting.aigcaas.secretKey}
-                        placeholder="Please input secret key for aigcaas"
-                        @sl-change=${this._inputChangeHandler}
-                    ></sl-input>
-                </div> -->
         `;
     }
 

@@ -35,10 +35,6 @@ class AppState extends State {
             openai: {
                 apiKey: '',
             },
-            aigcaas: {
-                secretId: '',
-                secretKey: '',
-            },
         },
     })
     setting: Chatbot.Setting;

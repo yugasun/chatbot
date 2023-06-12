@@ -51,11 +51,6 @@ declare namespace Chatbot {
         [prop: string]: unknown;
     }
 
-    interface AigcaasSetting {
-        secretId: string;
-        secretKey: string;
-    }
-
     interface Setting {
         model: string;
         stream: boolean;
@@ -63,7 +58,6 @@ declare namespace Chatbot {
         uploadFileUrl: string;
         maxContextLength: number;
         openai: OpenAISetting;
-        aigcaas: AigcaasSetting;
 
         [prop: string]: any;
     }
