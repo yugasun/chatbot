@@ -50,13 +50,13 @@ export default class ChatBot extends ChatbotElement {
     @property({ type: String, attribute: 'upload-file-url' })
     uploadFileUrl = '';
 
-    // open flag
-    @property({ type: Boolean, attribute: true })
-    open = false;
-
     // loading flag
     @property({ type: Boolean })
     loading = false;
+
+    // open flag
+    @property({ type: Boolean, attribute: true })
+    open = false;
 
     // show setting
     @property({ type: Boolean })

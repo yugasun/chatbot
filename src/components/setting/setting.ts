@@ -57,24 +57,6 @@ export class SettingElement extends ChatbotElement {
                             Clear
                         </sl-button>
                     </div>
-                    <div class="form-item">
-                        <label class="label"> Custom Request </label>
-
-                        <sl-switch
-                            class="item"
-                            label="Custom Request"
-                            name="customRequest"
-                            ?checked="${this.setting.customRequest}"
-                            @sl-change=${this._checkChangeHandler}
-                        >
-                            Enable it for your own backend.
-                        </sl-switch>
-                    </div>
-                    ${when(
-                        this.customRequest,
-                        () => null,
-                        () => this.renderInternalServices(),
-                    )}
 
                     <div class="form-item">
                         <label class="label">Streaming</label>
@@ -120,6 +102,9 @@ export class SettingElement extends ChatbotElement {
                 <label class="label">Service</label>
                 <sl-radio-group name="openai" value="openai" size="small">
                     <sl-radio-button value="openai">OpenAI</sl-radio-button>
+                    <sl-radio-button value="aigcaas" disabled>
+                        AIGCaaS
+                    </sl-radio-button>
                 </sl-radio-group>
             </div>
 
@@ -134,6 +119,27 @@ export class SettingElement extends ChatbotElement {
                     @sl-change=${this._inputChangeHandler}
                 ></sl-input>
             </div>
+
+            <!-- TODO: support aigcaas -->
+            <!-- <div class="form-item">
+                    <label class="label">AIGCaaS</label>
+                    <sl-input
+                        autofocus
+                        size="small"
+                        name="aigcaas.secretId"
+                        value=${this.setting.aigcaas.secretId}
+                        placeholder="Please input secret id for aigcaas"
+                        @sl-change=${this._inputChangeHandler}
+                    ></sl-input>
+                    <sl-input
+                        autofocus
+                        size="small"
+                        name="aigcaas.secretKey"
+                        value=${this.setting.aigcaas.secretKey}
+                        placeholder="Please input secret key for aigcaas"
+                        @sl-change=${this._inputChangeHandler}
+                    ></sl-input>
+                </div> -->
         `;
     }
 
