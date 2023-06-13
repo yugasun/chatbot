@@ -21,12 +21,18 @@ ChatBot is a chat robot, developed with Lit Element. It's very easy to use, just
 -   [x] [Commitlint](https://github.com/conventional-changelog/commitlint) Lint commit messages
 -   [x] [Commitizen](https://github.com/commitizen/cz-cli) The commitizen command line utility.
 
+## Demo
+
+[Live Demo](https://chatbot.yugasun.com/)
+
+<img src="./demo/chatbot-demo.png" alt="chatbot" width="400"/>
+
 ## Usage
 
 Install
 
 ```bash
-npm install @yugasun/chatbot
+pnpm install @yugasun/chatbot
 ```
 
 For use in Vue, refer to: https://vuejs.org/guide/extras/web-components.html
