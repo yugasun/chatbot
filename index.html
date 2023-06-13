@@ -41,26 +41,29 @@
                     console.log(e.detail);
                     const { messages, newMessage } = e.detail;
                     if (!messages || !messages[0] || !newMessage) return;
-                    chatBot.fetchStream(`/api/v1/chat/qa`, {
-                        method: 'POST',
-                        headers: {
-                            accept: 'text/event-stream',
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ text: messages[0].content }),
-                        onmessage: (res) => {
-                            const data = chatBot.decodeStreamData(res);
-                            text += data;
-                            /*
+                    chatBot.fetchStream(
+                        `http://localhost:8000/api/v1/chat/qa`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                accept: 'text/event-stream',
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ text: messages[0].content }),
+                            onmessage: (res) => {
+                                const data = chatBot.decodeStreamData(res);
+                                text += data;
+                                /*
                             // add to chatbot message
                             */
-                            chatBotState.updateMessage(newMessage, text);
+                                chatBotState.updateMessage(newMessage, text);
+                            },
+                            onclose: () => {
+                                console.log('close', text);
+                                text = '';
+                            },
                         },
-                        onclose: () => {
-                            console.log('close', text);
-                            text = '';
-                        },
-                    });
+                    );
                 });
 
                 chatBot.addEventListener('chatbot:send:file', (e) => {

@@ -88,11 +88,6 @@ export default ({ mode }) => {
                     changeOrigin: true,
                     rewrite: (path) => path.replace(/^\/openai/, ''),
                 },
-                '/api/v1': {
-                    // target: 'https://api.openai.com/v1/',
-                    target: process.env.VITE_QABOT_BASE_URL,
-                    changeOrigin: true,
-                },
             },
         },
     });
