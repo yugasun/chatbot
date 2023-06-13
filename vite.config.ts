@@ -6,6 +6,41 @@ import ViteInspector from 'vite-plugin-inspect';
 // import Unocss from 'unocss/vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
+export const icons = [
+    'chat-left-dots',
+    'x-lg',
+    'gear',
+    'person',
+    'robot',
+    'paperclip',
+    'send',
+    'trash',
+];
+
+function getIconPath(icon: string) {
+    return path.resolve(
+        __dirname,
+        `node_modules/@shoelace-style/shoelace/dist/assets/icons/${icon}.svg`,
+    );
+}
+
+function getStaticCopyPlugin() {
+    return [
+        viteStaticCopy({
+            targets: [
+                {
+                    src: icons.map(getIconPath),
+                    dest: path.resolve(__dirname, 'dist/shoelace/assets/icons'),
+                },
+                {
+                    src: path.resolve(__dirname, 'src/typings'),
+                    dest: path.resolve(__dirname, 'dist/typings'),
+                },
+            ],
+        }),
+    ];
+}
+
 const customElementName = 'chat-bot';
 
 // https://vitejs.dev/config/
@@ -23,6 +58,9 @@ export default ({ mode }) => {
             },
             rollupOptions: {
                 // external: /^lit/,
+                output: {
+                    assetFileNames: 'index.[ext]',
+                },
             },
         },
         resolve: {
@@ -56,21 +94,7 @@ export default ({ mode }) => {
                 __DATE__: new Date().toISOString(),
             }),
 
-            viteStaticCopy({
-                targets: [
-                    {
-                        src: path.resolve(
-                            __dirname,
-                            'node_modules/@shoelace-style/shoelace/dist/assets',
-                        ),
-                        dest: path.resolve(__dirname, 'dist/shoelace'),
-                    },
-                    {
-                        src: path.resolve(__dirname, 'src/typings'),
-                        dest: path.resolve(__dirname, 'dist/typings'),
-                    },
-                ],
-            }),
+            ...getStaticCopyPlugin(),
         ],
         server: {
             port: 8080,

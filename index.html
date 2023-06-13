@@ -17,10 +17,27 @@
                 width: 100%;
                 height: 100%;
             }
+
+            .welcome {
+                margin: 40px auto;
+                text-align: center;
+            }
+
+            .introduction {
+                font-size: 24px;
+                margin: 20px auto;
+            }
         </style>
     </head>
 
     <body>
+        <div class="welcome">
+            <h1>ChatBot</h1>
+            <section class="introduction">
+                Please click the <strong>lower-right</strong> button to start
+                chat.
+            </section>
+        </div>
         <script type="module" src="/src/index.ts"></script>
         <chat-bot
             name="<%- title %>"

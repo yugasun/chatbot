@@ -26,7 +26,7 @@ export function debounce<Fn extends (...args: any[]) => any>(
     let timeoutId: number | undefined;
     return (...args: Parameters<Fn>) => {
         clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => fn(...args), delay);
+        timeoutId = window.setTimeout(() => fn(...args), delay);
     };
 }
 
