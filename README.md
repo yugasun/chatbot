@@ -5,7 +5,7 @@
 [![Vite](https://img.shields.io/badge/Develop-Vite-747bff)](https://vitejs.dev)
 [![Build](https://github.com/yugasun/chatbot/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/yugasun/chatbot/actions/workflows/deploy.yml)
 
-ChatBot is a chat robot, developed with Lit Element. It's very easy to use, just add a script tag to your html file, and then you can use it.
+ChatBot is a chat robot, developed with web components. It can be used in any framework, such as Vue, React, Angular, etc.
 
 ## Feature
 

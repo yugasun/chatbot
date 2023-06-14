@@ -5,8 +5,8 @@ import styles from './anchor.styles';
 import { ChatbotElement } from '../../common/chatbot-element';
 import '../common/icon/icon.js';
 
-import RiMessage2Line from '~icons/ri/message-2-line';
-import RiCloseFill from '~icons/ri/close-fill';
+import BiChatDotsFill from '~icons/bi/chat-dots-fill';
+import BiXLg from '~icons/bi/x-lg';
 import { when } from 'lit/directives/when.js';
 
 @customElement('cb-anchor')
@@ -45,8 +45,8 @@ export class AnchorElement extends ChatbotElement {
                 >
                     ${when(
                         this.open,
-                        () => html`<cb-icon svg="${RiCloseFill}"></cb-icon>`,
-                        () => html`<cb-icon svg="${RiMessage2Line}"></cb-icon>`,
+                        () => html`<cb-icon svg="${BiXLg}"></cb-icon>`,
+                        () => html`<cb-icon svg="${BiChatDotsFill}"></cb-icon>`,
                     )}
                 </sl-button>
             </div>

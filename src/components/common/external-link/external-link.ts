@@ -45,7 +45,7 @@ export class ExternalLink extends LitElement {
                     ${this.inverse ? 'inverse' : ''}}
                 "
                 href="${this.url}"
-                target="__blank"
+                target="_blank"
                 reference="noopener noreferrer"
             >
                 <slot></slot>

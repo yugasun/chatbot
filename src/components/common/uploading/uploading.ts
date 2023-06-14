@@ -24,8 +24,8 @@ export class UploadingElement extends ChatbotElement {
     `;
 
     // file name property
-    @property({ type: Object })
-    files = [];
+    @property({ type: Array })
+    files: Chatbot.UploadFileItem[] = [];
 
     render() {
         return html` <div class="cb-uploading">
@@ -34,7 +34,7 @@ export class UploadingElement extends ChatbotElement {
                 <span>Uploading...</span>
             </div>
             <div class="cb-uploading__filelist">
-                ${this.files.map((file: File) => {
+                ${this.files.map((file) => {
                     return html`${file.name}<br />`;
                 })}
             </div>

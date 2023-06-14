@@ -37,7 +37,7 @@
     "types": [
       "mocha",
       "vite/client",
-      "unplugin-icons/types/web-components",
+      "unplugin-icons/types/raw",
     ],
     "plugins": [
       {
@@ -49,8 +49,6 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue"
   ],
   "exclude": [
     "demo",

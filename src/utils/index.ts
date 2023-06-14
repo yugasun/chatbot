@@ -18,33 +18,6 @@ export function copyToClipboard(text: string) {
     });
 }
 
-// debounce function with args
-export function debounce<Fn extends (...args: any[]) => any>(
-    fn: Fn,
-    delay: number,
-): (...args: Parameters<Fn>) => any {
-    let timeoutId: number | undefined;
-    return (...args: Parameters<Fn>) => {
-        clearTimeout(timeoutId);
-        timeoutId = window.setTimeout(() => fn(...args), delay);
-    };
-}
-
-// throttle function with args
-export function throttle<Fn extends (...args: any[]) => any>(
-    fn: Fn,
-    delay: number,
-) {
-    let lastTime = 0;
-    return (...args: Parameters<Fn>) => {
-        const now = Date.now();
-        if (now - lastTime > delay) {
-            fn(...args);
-            lastTime = now;
-        }
-    };
-}
-
 /**
  * select file input, used for file upload
  * @param multiple
