@@ -1,6 +1,9 @@
 {
   "name": "@yugasun/chatbot",
   "version": "0.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "ChatBot is a chat robot, developed with web components. It can be used in any framework, such as Vue, React, Angular, etc.",
   "scripts": {
     "dev": "vite",
