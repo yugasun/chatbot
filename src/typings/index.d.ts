@@ -55,6 +55,7 @@ declare namespace Chatbot {
         model: string;
         stream: boolean;
         customRequest: boolean;
+        enableUploadFile: boolean;
         uploadFileUrl: string;
         maxContextLength: number;
         openai: OpenAISetting;

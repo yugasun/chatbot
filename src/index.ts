@@ -46,7 +46,11 @@ export default class ChatBot extends ChatbotElement {
     @property({ type: Boolean, attribute: 'custom-request' })
     customRequest = false;
 
-    // custom upload file url
+    // enable file upload
+    @property({ type: Boolean, attribute: 'enable-file-upload' })
+    enableFileUpload = false;
+
+    // custom upload file url, must be set when enableFileUpload is true
     @property({ type: String, attribute: 'upload-file-url' })
     uploadFileUrl = '';
 
@@ -85,7 +89,10 @@ export default class ChatBot extends ChatbotElement {
                           ?open=${this.showSetting}
                           .setting=${appState.setting}
                       ></cb-setting>
-                      <cb-user-input loading=${this.loading}></cb-user-input>
+                      <cb-user-input
+                          loading=${this.loading}
+                          ?enable-file-upload=${this.enableFileUpload}
+                      ></cb-user-input>
                       ${this.displayLicense
                           ? html`<cb-footer></cb-footer>`
                           : ''}
@@ -135,56 +142,54 @@ export default class ChatBot extends ChatbotElement {
         });
 
         // listen send file
-        addEventListener('message:send:file', async (event: Event) => {
-            const detail = (event as CustomEvent).detail as {
-                files: File[];
-            };
-            console.log('detail', detail);
+        addEventListener('message:send:file', this._sendFileHandler.bind(this));
+    }
 
-            // add file message
-            const uploadFileInfos = detail.files.map((file, index) => {
-                return {
-                    id: `${file.name}-${index}`,
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    url: '',
+    private async _sendFileHandler(event: Event) {
+        const detail = (event as CustomEvent).detail as {
+            files: File[];
+        };
+
+        // add file message
+        const uploadFileInfos = detail.files.map((file, index) => {
+            return {
+                id: `${file.name}-${index}`,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                url: '',
+            };
+        });
+        const newMsg: Chatbot.Message = {
+            id: uuid(),
+            author: 'user',
+            type: 'file',
+            isUploading: true,
+            data: {
+                files: uploadFileInfos,
+            },
+        };
+
+        appState.addMessage(newMsg);
+
+        if (this.uploadFileUrl) {
+            // upload file to server
+            const res = await uploadFile(this.uploadFileUrl, detail.files);
+            if (res.code === 0 && res.data) {
+                newMsg.isUploading = false;
+                newMsg.data = {
+                    files: res.data,
                 };
-            });
-            const newMsg: Chatbot.Message = {
-                id: uuid(),
-                author: 'user',
-                type: 'file',
-                isUploading: true,
-                data: {
-                    files: uploadFileInfos,
-                },
-            };
 
-            console.log('newMsg', newMsg);
-
-            appState.addMessage(newMsg);
-
-            if (this.uploadFileUrl) {
-                // upload file to server
-                const res = await uploadFile(this.uploadFileUrl, detail.files);
-                console.log('res', res);
-                if (res.code === 0 && res.data) {
-                    newMsg.isUploading = false;
-                    newMsg.data = {
-                        files: res.data,
-                    };
-
-                    appState.updateMessage(newMsg);
-                }
+                appState.updateMessage(newMsg);
             }
+        }
 
-            this.emit('chatbot:file:send', {
-                detail: {
-                    files: detail.files,
-                    message: newMsg,
-                },
-            });
+        this.emit('chatbot:file:send', {
+            detail: {
+                files: detail.files,
+                message: newMsg,
+            },
         });
     }
 
@@ -193,6 +198,7 @@ export default class ChatBot extends ChatbotElement {
         const setting = appState.setting;
         setting.stream = this.stream;
         setting.customRequest = this.customRequest;
+        setting.enableUploadFile = this.enableFileUpload;
         setting.uploadFileUrl = this.uploadFileUrl;
 
         appState.setSetting(setting);

@@ -39,8 +39,6 @@ export class ExternalLink extends ChatbotElement {
     inverse = false;
 
     render() {
-        console.log('this.url', this.url);
-
         return html`
             <a
                 class="

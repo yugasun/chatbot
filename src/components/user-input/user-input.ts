@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
 
 import styles from './user-input.styles';
 import { ChatbotElement } from '../../common/chatbot-element';
@@ -14,6 +15,10 @@ export class UserInput extends ChatbotElement {
 
     @property({ type: String, attribute: 'send-button-label' })
     sendButtonLabel = 'Send';
+
+    // enable file upload
+    @property({ type: Boolean, attribute: 'enable-file-upload' })
+    enableFileUpload = false;
 
     // property value
     @property({ type: String })
@@ -78,21 +83,27 @@ export class UserInput extends ChatbotElement {
                     @keydown=${this._keyDownHandler}
                 ></sl-textarea>
 
-                <sl-icon-button
-                    @click=${this._sendFileHandler}
-                    name="paperclip"
-                    label="Attachment"
-                    size="large"
-                    class="paperclip-button"
-                >
-                    <!-- select file input -->
-                    <input
-                        type="file"
-                        id="file"
-                        name="file"
-                        class="file-input"
-                    />
-                </sl-icon-button>
+                ${when(
+                    this.enableFileUpload,
+                    () => html`
+                        <sl-icon-button
+                            @click=${this._sendFileHandler}
+                            name="paperclip"
+                            label="Attachment"
+                            size="large"
+                            class="paperclip-button"
+                        >
+                            <!-- select file input -->
+                            <input
+                                type="file"
+                                id="file"
+                                name="file"
+                                class="file-input"
+                            />
+                        </sl-icon-button>
+                    `,
+                    () => html``,
+                )}
                 <sl-icon-button
                     @click=${this._sendHandler}
                     name="send"

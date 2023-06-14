@@ -6,6 +6,8 @@ import ViteInspector from 'vite-plugin-inspect';
 // import Unocss from 'unocss/vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 export const icons = [
     'chat-left-dots',
     'x-lg',
@@ -15,6 +17,12 @@ export const icons = [
     'paperclip',
     'send',
     'trash',
+    'filetype-md',
+    'filetype-pdf',
+    'filetype-doc',
+    'filetype-docx',
+    'filetype-csv',
+    'filetype-txt',
 ];
 
 function getIconPath(icon: string) {
@@ -25,13 +33,17 @@ function getIconPath(icon: string) {
 }
 
 function getStaticCopyPlugin() {
+    const copyIcons = [
+        {
+            src: icons.map(getIconPath),
+            dest: path.resolve(__dirname, 'dist/assets/icons'),
+        },
+    ];
+
     return [
         viteStaticCopy({
             targets: [
-                {
-                    src: icons.map(getIconPath),
-                    dest: path.resolve(__dirname, 'dist/shoelace/assets/icons'),
-                },
+                ...copyIcons,
                 {
                     src: path.resolve(__dirname, 'src/typings'),
                     dest: path.resolve(__dirname, 'dist/typings'),
