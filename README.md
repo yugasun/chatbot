@@ -41,7 +41,17 @@ For use in Vue, refer to: https://vuejs.org/guide/extras/web-components.html
 import '@yugasun/chatbot';
 ```
 
-###
+Then use it in vue template:
+
+```html
+<chat-bot></chat-bot>
+```
+
+To enable stream mode, you need to add the `stream` attribute to the `chat-bot` tag.
+
+```html
+<chat-bot stream></chat-bot>
+```
 
 ## Develop
 
