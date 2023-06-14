@@ -1,13 +1,18 @@
 import { html } from 'lit';
 import { customElement, property, queryAll } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { until } from 'lit-html/directives/until.js';
 
 import { ChatbotElement } from '../../common/chatbot-element';
 import '../common/thinking/thinking';
 import '../common/uploading/uploading';
+import '../common/icon/icon';
 import '../file/file';
+
+import BiTrash from '~icons/bi/trash';
+import BiPerson from '~icons/bi/person';
+import BiRobot from '~icons/bi/robot';
 
 import styles from './message.styles';
 import { parse } from '../../utils/markdown';
@@ -40,7 +45,9 @@ export class Message extends ChatbotElement {
     updated(changedProperties: Map<string | number | symbol, unknown>): void {
         super.updated(changedProperties);
         if (changedProperties.has('message')) {
-            this._addCopyEvents();
+            requestIdleCallback(() => {
+                this._addCopyEvents();
+            });
         }
     }
 
@@ -94,11 +101,16 @@ export class Message extends ChatbotElement {
     renderButtons(direct = 'left') {
         return html`<div class="cb-message__buttons ${direct}">
             <!-- delete button -->
-            <sl-icon-button
+            <sl-button
                 class="cb-message__delete-button"
                 name="trash"
                 @click=${this._removeMessageHandler}
-            ></sl-icon-button>
+                circle
+                variant="text"
+                size="small"
+            >
+                <cb-icon svg="${BiTrash}" style="font-size: 1em"></cb-icon>
+            </sl-button>
         </div>`;
     }
 
@@ -107,6 +119,7 @@ export class Message extends ChatbotElement {
             <div
                 class="
                     cb-message__content
+                    markdown-body
                     ${type}-message
                     message-type-${message.type}
                     ${message.isThinking ? 'thinking' : ''}
@@ -116,6 +129,10 @@ export class Message extends ChatbotElement {
                 ${this.renderMessageContent(message)}
             </div>
         `;
+    }
+
+    private async _getMessageText(message: Chatbot.Message) {
+        return parse(message.data.text!);
     }
 
     renderMessageContent(message: Chatbot.Message) {
@@ -129,7 +146,11 @@ export class Message extends ChatbotElement {
         }
         if (message.type === 'text') {
             return html`<div class="cb-message-text">
-                ${parse(message.data.text!)}
+                ${until(
+                    this._getMessageText(message).then((res) => {
+                        return html`${res}`;
+                    }),
+                )}
             </div>`;
         }
         if (message.type === 'file') {
@@ -145,7 +166,11 @@ export class Message extends ChatbotElement {
             )}`;
         }
         return html`<div class="cb-message-text">
-            ${parse(message.data.text?.toString() || '')}
+            ${until(
+                parse(message.data.text?.toString() || '').then((res) => {
+                    return html`${res}`;
+                }),
+            )}
         </div>`;
     }
 
@@ -153,7 +178,7 @@ export class Message extends ChatbotElement {
         return html`
             <div class="cb-message" part="cb-message">
                 <sl-avatar class="avatar bot-avatar small" label="Bot">
-                    <sl-icon slot="icon" name="robot"></sl-icon>
+                    <cb-icon slot="icon" svg="${BiRobot}"></cb-icon>
                 </sl-avatar>
                 ${this.renderMessage('bot', message)}
                 <div class="cb-message__blank">&nbsp;</div>
@@ -167,7 +192,7 @@ export class Message extends ChatbotElement {
                 <div class="cb-message__blank">&nbsp;</div>
                 ${this.renderMessage('user', message)}
                 <sl-avatar class="avatar user-avatar small" label="User">
-                    <sl-icon slot="icon" name="person"></sl-icon>
+                    <cb-icon slot="icon" svg="${BiPerson}"></cb-icon>
                 </sl-avatar>
             </div>
         `;

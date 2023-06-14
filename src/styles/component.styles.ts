@@ -15,4 +15,18 @@ export default css`
     .link__item.inverse:active {
         color: white;
     }
+
+    sl-button.icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .color-white {
+        color: white;
+    }
+
+    .color-default {
+        color: var(--sl-color-neutral-600);
+    }
 `;

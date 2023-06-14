@@ -3,55 +3,8 @@ import * as path from 'path';
 import replace from '@rollup/plugin-replace';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import ViteInspector from 'vite-plugin-inspect';
-// import Unocss from 'unocss/vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-
-const isProduction = process.env.NODE_ENV === 'production';
-
-export const icons = [
-    'chat-left-dots',
-    'x-lg',
-    'gear',
-    'person',
-    'robot',
-    'paperclip',
-    'send',
-    'trash',
-    'filetype-md',
-    'filetype-pdf',
-    'filetype-doc',
-    'filetype-docx',
-    'filetype-csv',
-    'filetype-txt',
-];
-
-function getIconPath(icon: string) {
-    return path.resolve(
-        __dirname,
-        `node_modules/@shoelace-style/shoelace/dist/assets/icons/${icon}.svg`,
-    );
-}
-
-function getStaticCopyPlugin() {
-    const copyIcons = [
-        {
-            src: icons.map(getIconPath),
-            dest: path.resolve(__dirname, 'dist/assets/icons'),
-        },
-    ];
-
-    return [
-        viteStaticCopy({
-            targets: [
-                ...copyIcons,
-                {
-                    src: path.resolve(__dirname, 'src/typings'),
-                    dest: path.resolve(__dirname, 'dist/typings'),
-                },
-            ],
-        }),
-    ];
-}
+import UnpluginIcons from 'unplugin-icons/vite';
 
 const customElementName = 'chat-bot';
 
@@ -66,11 +19,17 @@ export default ({ mode }) => {
                 entry: path.resolve(__dirname, 'src/index.ts'),
                 name: customElementName,
                 fileName: (format) => `index.${format}.js`,
-                formats: ['es', 'umd'],
+                formats: ['es'],
             },
             rollupOptions: {
-                // external: /^lit/,
+                external: [
+                    /^lit/,
+                    /^@shoelace-style\/shoelace/,
+                    /^markdown-it/,
+                    /^highlight.js/,
+                ],
                 output: {
+                    extend: true,
                     assetFileNames: 'index.[ext]',
                 },
             },
@@ -81,6 +40,10 @@ export default ({ mode }) => {
             },
         },
         plugins: [
+            UnpluginIcons({
+                compiler: 'raw',
+                autoInstall: true,
+            }),
             createHtmlPlugin({
                 minify: true,
                 /**
@@ -106,7 +69,14 @@ export default ({ mode }) => {
                 __DATE__: new Date().toISOString(),
             }),
 
-            ...getStaticCopyPlugin(),
+            viteStaticCopy({
+                targets: [
+                    {
+                        src: path.resolve(__dirname, 'src/typings'),
+                        dest: path.resolve(__dirname, 'dist/typings'),
+                    },
+                ],
+            }),
         ],
         server: {
             port: 8080,
@@ -118,11 +88,10 @@ export default ({ mode }) => {
                 ignored: ['**/demo/**'],
             },
             proxy: {
-                '/openai': {
+                '/chat/completion': {
                     // target: 'https://api.openai.com/v1/',
                     target: process.env.VITE_OPENAI_BASE_URL,
                     changeOrigin: true,
-                    rewrite: (path) => path.replace(/^\/openai/, ''),
                 },
             },
         },

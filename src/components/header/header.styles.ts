@@ -41,15 +41,6 @@ export default css`
         position: absolute;
         right: 0px;
         font-size: 1.5rem;
-    }
-
-    sl-icon-button::part(base) {
         color: white;
-        font-weight: bold;
-    }
-
-    sl-icon-button::part(base):hover,
-    sl-icon-button::part(base):focus {
-        opacity: 0.8;
     }
 `;

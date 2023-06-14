@@ -43,6 +43,7 @@ declare namespace Chatbot {
     }
 
     interface OpenAISetting {
+        apiBase: string;
         apiKey: string;
         maxTokens?: number;
         temperature?: number;
@@ -52,14 +53,22 @@ declare namespace Chatbot {
     }
 
     interface Setting {
+        // llm model, default: gpt-3.5-turbo
         model: string;
+        // stream mode, default: false
         stream: boolean;
+        // custom request, default: false
         customRequest: boolean;
+        // enable upload file, default: false
         enableUploadFile: boolean;
+        // upload file url
         uploadFileUrl: string;
+        // max context length, default: 20
         maxContextLength: number;
+        // openai setting
         openai: OpenAISetting;
 
+        // extra fields
         [prop: string]: any;
     }
 

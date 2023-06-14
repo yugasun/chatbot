@@ -4,6 +4,9 @@ import { when } from 'lit/directives/when.js';
 import { ChatbotElement } from '../../common/chatbot-element';
 import './clear-message.dialog';
 
+import '../common/icon/icon.js';
+import BiXLg from '~icons/bi/x-lg';
+
 import styles from './setting.styles';
 
 @customElement('cb-setting')
@@ -30,19 +33,13 @@ export class SettingElement extends ChatbotElement {
     render() {
         this.customRequest = this.setting.customRequest;
 
-        return html` <!-- clear message dialog -->
-            <cb-clear-message-dialog
-                .open=${this.clearMessageDialogOpen}
-                @confirm=${this._clearCacheHandler}
-                @cancel=${() => {
-                    this.clearMessageDialogOpen = false;
-                }}
-            ></cb-clear-message-dialog>
-            <sl-dialog
+        return html`
+            <cb-dialog
                 label="Setting"
                 class="cb-dialog"
                 ?open=${this.open}
-                @sl-hide=${this._settingCancelHandler}
+                ?no-header=${true}
+                @cancel=${this._settingCancelHandler}
             >
                 <form>
                     <div class="form-item">
@@ -57,19 +54,19 @@ export class SettingElement extends ChatbotElement {
                             Clear
                         </sl-button>
                     </div>
-                    <div class="form-item">
+                    <!-- <div class="form-item">
                         <label class="label"> Custom Request </label>
 
                         <sl-switch
                             class="item"
                             label="Custom Request"
                             name="customRequest"
-                            ?checked="${this.setting.customRequest}"
+                            ?checked="${this.customRequest}"
                             @sl-change=${this._checkChangeHandler}
                         >
                             Enable it for your own backend.
                         </sl-switch>
-                    </div>
+                    </div> -->
                     ${when(
                         this.customRequest,
                         () => null,
@@ -99,19 +96,27 @@ export class SettingElement extends ChatbotElement {
                 </form>
 
                 <sl-button
-                    slot="footer"
+                    slot="cb-footer"
                     variant="primary"
                     @click=${this._settingConfirmHandler}
                 >
                     Confirm
                 </sl-button>
                 <sl-button
-                    slot="footer"
+                    slot="cb-footer"
                     variant="default"
                     @click=${this._settingCancelHandler}
                     >Cancel</sl-button
                 >
-            </sl-dialog>`;
+            </cb-dialog>
+            <cb-clear-message-dialog
+                .open=${this.clearMessageDialogOpen}
+                @confirm=${this._clearCacheHandler}
+                @cancel=${() => {
+                    this.clearMessageDialogOpen = false;
+                }}
+            ></cb-clear-message-dialog>
+        `;
     }
 
     renderInternalServices() {
@@ -131,6 +136,17 @@ export class SettingElement extends ChatbotElement {
                     name="openai.apiKey"
                     value=${this.setting.openai.apiKey}
                     placeholder="Please input api key for openai"
+                    @sl-change=${this._inputChangeHandler}
+                ></sl-input>
+            </div>
+            <div class="form-item">
+                <label class="label">API Base</label>
+                <sl-input
+                    autofocus
+                    size="small"
+                    name="openai.apiBase"
+                    value=${this.setting.openai.apiBase}
+                    placeholder="Please input api base for openai"
                     @sl-change=${this._inputChangeHandler}
                 ></sl-input>
             </div>

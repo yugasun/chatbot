@@ -4,6 +4,7 @@ export default css`
     :host {
     }
     .cb-wrapper {
+        color: var(--sl-color-neutral-600);
         width: 380px;
         overflow: hidden;
         display: flex;

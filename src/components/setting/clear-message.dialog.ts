@@ -2,6 +2,8 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { ChatbotElement } from '../../common/chatbot-element';
 
+import '../common/dialog/dialog.js';
+
 @customElement('cb-clear-message-dialog')
 export class ClearMessageDialog extends ChatbotElement {
     static styles = css`
@@ -17,25 +19,27 @@ export class ClearMessageDialog extends ChatbotElement {
     open = false;
 
     render() {
-        return html` <sl-dialog
-            label="Dialog"
+        return html` <cb-dialog
+            label="Confirm"
             class="cb-clear-message-dialog"
-            .open=${this.open}
+            ?open=${this.open}
+            zindex="1000"
+            @cancel=${this._cancelHandler}
         >
             Confirm to clear all history messages?
             <sl-button
-                slot="footer"
+                slot="cb-footer"
                 variant="primary"
                 @click=${this._confirmHandler}
                 >Confirm</sl-button
             >
             <sl-button
-                slot="footer"
+                slot="cb-footer"
                 variant="default"
                 @click=${this._cancelHandler}
                 >Close</sl-button
             >
-        </sl-dialog>`;
+        </cb-dialog>`;
     }
 
     private _confirmHandler() {

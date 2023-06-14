@@ -26,35 +26,51 @@ export default class ChatBot extends ChatbotElement {
     // @ts-ignore
     private store = new StateController(this, appState);
 
-    // display license
+    /**
+     * display license
+     */
     @property({ type: Boolean, attribute: 'display-license' })
     displayLicense = true;
 
-    // bot name
+    /**
+     * bot name, default: ChatBot
+     */
     @property({ type: String, attribute: 'name' })
     name = 'ChatBot';
 
-    // custom send handler
+    /**
+     * custom send handler, default: false
+     */
     @property({ type: Boolean, attribute: 'custom-send-handler' })
     customSendHandler = false;
 
-    // stream
+    /**
+     * stream mode, default: false
+     */
     @property({ type: Boolean, attribute: 'stream' })
     stream = false;
 
-    // custom request
+    /**
+     * custom request, default: false
+     */
     @property({ type: Boolean, attribute: 'custom-request' })
     customRequest = false;
 
-    // enable file upload
+    /**
+     * enable file upload, default: false
+     */
     @property({ type: Boolean, attribute: 'enable-file-upload' })
     enableFileUpload = false;
 
-    // custom upload file url, must be set when enableFileUpload is true
+    /**
+     * custom upload file url, must be set when enableFileUpload is true, default: ''
+     */
     @property({ type: String, attribute: 'upload-file-url' })
     uploadFileUrl = '';
 
-    // open flag
+    /**
+     * whether auto open chatbot, default: false
+     */
     @property({ type: Boolean, attribute: true })
     open = false;
 
@@ -90,7 +106,7 @@ export default class ChatBot extends ChatbotElement {
                           .setting=${appState.setting}
                       ></cb-setting>
                       <cb-user-input
-                          loading=${this.loading}
+                          ?loading=${this.loading}
                           ?enable-file-upload=${this.enableFileUpload}
                       ></cb-user-input>
                       ${this.displayLicense
@@ -212,11 +228,11 @@ export default class ChatBot extends ChatbotElement {
     }
 
     // scroll to bottom
-    private _scrollToBottom() {
+    private _scrollToBottom(smooth = false) {
         requestIdleCallback(() => {
             this._messageList?.scrollTo({
                 top: this._messageList.scrollHeight,
-                behavior: 'auto',
+                behavior: smooth ? 'smooth' : 'auto',
             });
         });
     }
@@ -225,20 +241,13 @@ export default class ChatBot extends ChatbotElement {
         _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>,
     ): void {
         super.updated(_changedProperties);
-        this._scrollToBottom();
-
-        // check auth setting
-        this._checkAuth();
 
         // init setting
         this._initSetting();
-    }
 
-    // check auth
-    private _checkAuth() {
-        if (!appState.setting.openai.apiKey) {
-            // this.showSetting = true;
-        }
+        setTimeout(() => {
+            this._scrollToBottom();
+        }, 0);
     }
 
     public setLoading(val: boolean) {
@@ -251,7 +260,10 @@ export default class ChatBot extends ChatbotElement {
         messages: Chatbot.OpenaiMessage[],
     ) {
         let text = '';
+        const apiBase =
+            appState.setting.openai.apiBase || 'https://api.openai.com/v1';
         const data = await openai.chat({
+            url: `${apiBase}/chat/completions`,
             apiKey: appState.setting.openai.apiKey,
             messages: messages,
             options: {

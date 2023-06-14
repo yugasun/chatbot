@@ -1,9 +1,8 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { ChatbotElement } from '../../../common/chatbot-element';
 
 @customElement('cb-external-link')
-export class ExternalLink extends ChatbotElement {
+export class ExternalLink extends LitElement {
     static styles = css`
         :host {
             --primary-color: var(--sl-color-primary-600);

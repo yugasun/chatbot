@@ -33,6 +33,7 @@ class AppState extends State {
             customRequest: false,
             uploadFileUrl: '',
             openai: {
+                apiBase: 'https://api.openai.com/v1',
                 apiKey: '',
             },
         },

@@ -52,6 +52,7 @@ async function parseOpenaiResponse(
 }
 
 export async function chat(params: {
+    url: string;
     apiKey: string;
     messages: Chatbot.OpenaiMessage[];
     options: Record<string, any>;
@@ -61,21 +62,18 @@ export async function chat(params: {
     if (!params.apiKey) {
         throw new Error('apiKey is required');
     }
-    const response = await request.post(
-        getFullUrl('/openai/chat/completions'),
-        {
-            json: {
-                messages: params.messages,
-                ...(params.options ?? {}),
-            },
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${params.apiKey}`,
-            },
-            timeout: 1000 * 60 * 10,
-            signal: params.signal,
+    const response = await request.post(params.url, {
+        json: {
+            messages: params.messages,
+            ...(params.options ?? {}),
         },
-    );
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${params.apiKey}`,
+        },
+        timeout: 1000 * 60 * 10,
+        signal: params.signal,
+    });
 
     const data = response.body;
     if (!data) {

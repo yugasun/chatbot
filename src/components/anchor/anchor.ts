@@ -1,7 +1,13 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+
 import styles from './anchor.styles';
 import { ChatbotElement } from '../../common/chatbot-element';
+import '../common/icon/icon.js';
+
+import RiMessage2Line from '~icons/ri/message-2-line';
+import RiCloseFill from '~icons/ri/close-fill';
+import { when } from 'lit/directives/when.js';
 
 @customElement('cb-anchor')
 export class AnchorElement extends ChatbotElement {
@@ -30,12 +36,19 @@ export class AnchorElement extends ChatbotElement {
                 part="cb-anchor"
                 @click=${this._clickHandler.bind(this)}
             >
-                <sl-icon-button
-                    name="${this.open ? 'x-lg' : 'chat-left-dots'}"
+                <sl-button
                     label="Start"
                     size="large"
-                    class="anchor-button"
-                ></sl-icon-button>
+                    variant="primary"
+                    class="icon anchor-button"
+                    circle
+                >
+                    ${when(
+                        this.open,
+                        () => html`<cb-icon svg="${RiCloseFill}"></cb-icon>`,
+                        () => html`<cb-icon svg="${RiMessage2Line}"></cb-icon>`,
+                    )}
+                </sl-button>
             </div>
         `;
     }

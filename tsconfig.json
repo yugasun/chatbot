@@ -36,7 +36,8 @@
     },
     "types": [
       "mocha",
-      "vite/client"
+      "vite/client",
+      "unplugin-icons/types/web-components",
     ],
     "plugins": [
       {

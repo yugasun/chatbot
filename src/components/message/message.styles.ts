@@ -1,6 +1,7 @@
+import { css } from 'lit';
 import componentStyles from '../../styles/component.styles';
 import markdownStyles from '../../styles/markdown.styles';
-import { css } from 'lit';
+
 export default css`
     ${componentStyles}
     ${markdownStyles}
@@ -90,6 +91,7 @@ export default css`
     .user-message {
         color: rgb(255, 255, 255);
         background-color: var(--primary-color);
+        text-align: left;
     }
     .bot-message {
         color: rgb(34, 34, 34);
@@ -98,6 +100,10 @@ export default css`
 
     sl-avatar.small {
         --size: 2.5rem;
+    }
+
+    .cb-message-text {
+        text-align: left;
     }
 
     .cb-message-text p {

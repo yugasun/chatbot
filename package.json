@@ -4,7 +4,7 @@
   "description": "Web component template using LitElement with TypeScript + Vite",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc && pnpm run copy:dist",
+    "build": "vite build && tsc",
     "copy:dist": "cp -r ./dist ./demo",
     "demo": "http-server demo -o",
     "lint": "pnpm run lint:lit-analyzer && pnpm run lint:eslint",
@@ -15,7 +15,7 @@
     "test:component": "web-test-runner -- --watch --group",
     "test:watch": "web-test-runner --watch --group default",
     "commit": "git-cz",
-    "prepare": "husky install && pnpm build"
+    "prepare": "husky install"
   },
   "keywords": [
     "chatbot",
@@ -36,7 +36,8 @@
   "main": "dist/index.es.js",
   "module": "dist/index.es.js",
   "exports": {
-    ".": "./dist/index.es.js"
+    ".": "./dist/index.es.js",
+    "./dist/*": "./dist/*"
   },
   "types": "dist/index.d.ts",
   "files": [
@@ -49,7 +50,6 @@
     "@lit-app/state": "^0.8.4",
     "@lit/localize": "^0.11.4",
     "@shoelace-style/shoelace": "^2.4.0",
-    "@unocss/reset": "^0.52.7",
     "highlight.js": "^11.8.0",
     "ky": "^0.33.3",
     "lit": "^2.7.5",
@@ -61,6 +61,7 @@
     "@commitlint/cli": "^17.6.5",
     "@commitlint/config-conventional": "^17.6.5",
     "@custom-elements-manifest/analyzer": "^0.8.3",
+    "@iconify-json/bi": "^1.1.17",
     "@lit/localize-tools": "^0.6.9",
     "@open-wc/testing": "^3.2.0",
     "@rollup/plugin-replace": "^4.0.0",
@@ -100,6 +101,7 @@
     "ts-lit-plugin": "^1.2.1",
     "typescript": "^4.9.5",
     "unocss": "^0.50.8",
+    "unplugin-icons": "^0.16.3",
     "vite": "^3.2.7",
     "vite-plugin-css-injected-by-js": "^3.1.1",
     "vite-plugin-html": "^3.2.0",

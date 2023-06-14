@@ -1,9 +1,8 @@
-import { css, html } from 'lit';
+import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { ChatbotElement } from '../../../common/chatbot-element';
 
 @customElement('cb-thinking')
-export class ThinkingElement extends ChatbotElement {
+export class ThinkingElement extends LitElement {
     static styles = css`
         .cb-thinking {
             text-align: center;

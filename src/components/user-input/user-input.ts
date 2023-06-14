@@ -6,6 +6,11 @@ import styles from './user-input.styles';
 import { ChatbotElement } from '../../common/chatbot-element';
 import { selectFile } from '../../utils';
 
+import '../common/icon/icon.js';
+
+import BiSend from '~icons/bi/send';
+import BiPaperclip from '~icons/bi/paperclip';
+
 @customElement('cb-user-input')
 export class UserInput extends ChatbotElement {
     static styles = styles;
@@ -86,13 +91,16 @@ export class UserInput extends ChatbotElement {
                 ${when(
                     this.enableFileUpload,
                     () => html`
-                        <sl-icon-button
+                        <sl-button
                             @click=${this._sendFileHandler}
                             name="paperclip"
                             label="Attachment"
                             size="large"
                             class="paperclip-button"
+                            variant="text"
+                            circle
                         >
+                            <cb-icon svg="${BiPaperclip}"></cb-icon>
                             <!-- select file input -->
                             <input
                                 type="file"
@@ -100,17 +108,23 @@ export class UserInput extends ChatbotElement {
                                 name="file"
                                 class="file-input"
                             />
-                        </sl-icon-button>
+                        </sl-button>
                     `,
                     () => html``,
                 )}
-                <sl-icon-button
+                <sl-button
                     @click=${this._sendHandler}
                     name="send"
                     label="Send"
-                    size="large"
+                    size="small"
                     class="send-button"
-                ></sl-icon-button>
+                    variant="text"
+                    ?disabled=${this.value.length === 0}
+                    ?loading=${this.loading}
+                    circle
+                >
+                    <cb-icon svg="${BiSend}"></cb-icon>
+                </sl-button>
             </div>
         `;
     }
