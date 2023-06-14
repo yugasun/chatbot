@@ -35,17 +35,14 @@ Install
 pnpm install @yugasun/chatbot
 ```
 
-For use in Vue, refer to: https://vuejs.org/guide/extras/web-components.html
+Then import it in entry file:
 
 ```js
 import '@yugasun/chatbot';
 ```
 
-Then use it in vue template:
-
-```html
-<chat-bot></chat-bot>
-```
+For Vue, refer to: [Vue Demo](./demo/vue)
+For React, refer to: [React Demo](./demo/react)
 
 To enable stream mode, you need to add the `stream` attribute to the `chat-bot` tag.
 
