@@ -37,7 +37,7 @@
     "types": [
       "mocha",
       "vite/client",
-      "unplugin-icons/types/raw",
+      "unplugin-icons/types/web-components",
     ],
     "plugins": [
       {

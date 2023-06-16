@@ -49,6 +49,7 @@ export class UserInput extends ChatbotElement {
     private _sendHandler() {
         this.emit('message:send', {
             detail: {
+                timestamp: Date.now(),
                 author: 'user',
                 type: 'text',
                 data: {

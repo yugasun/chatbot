@@ -15,7 +15,6 @@ import { appState } from './store/app.state';
 import { ChatbotElement } from './common/chatbot-element';
 
 import * as openai from './service/openai';
-import { uuid } from './utils';
 import { fetchStream } from './utils/request';
 import { uploadFile } from './service/server';
 
@@ -37,12 +36,6 @@ export default class ChatBot extends ChatbotElement {
      */
     @property({ type: String, attribute: 'name' })
     name = 'ChatBot';
-
-    /**
-     * custom send handler, default: false
-     */
-    @property({ type: Boolean, attribute: 'custom-send-handler' })
-    customSendHandler = false;
 
     /**
      * stream mode, default: false
@@ -71,7 +64,7 @@ export default class ChatBot extends ChatbotElement {
     /**
      * whether auto open chatbot, default: false
      */
-    @property({ type: Boolean, attribute: true })
+    @property({ type: Boolean, attribute: 'open' })
     open = false;
 
     // loading flag
@@ -176,8 +169,7 @@ export default class ChatBot extends ChatbotElement {
                 url: '',
             };
         });
-        const newMsg: Chatbot.Message = {
-            id: uuid(),
+        const newMsg: Chatbot.NewMessage = {
             author: 'user',
             type: 'file',
             isUploading: true,
@@ -238,7 +230,9 @@ export default class ChatBot extends ChatbotElement {
     }
 
     protected updated(
-        _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>,
+        _changedProperties:
+            | PropertyValueMap<unknown>
+            | Map<PropertyKey, unknown>,
     ): void {
         super.updated(_changedProperties);
 
@@ -256,7 +250,7 @@ export default class ChatBot extends ChatbotElement {
 
     // send to openai
     private async _sendToOpenai(
-        newMsg: Chatbot.Message,
+        newMsg: Chatbot.NewMessage,
         messages: Chatbot.OpenaiMessage[],
     ) {
         let text = '';
@@ -268,7 +262,7 @@ export default class ChatBot extends ChatbotElement {
             messages: messages,
             options: {
                 stream: appState.setting.stream,
-                model: appState.setting.model,
+                model: appState.setting.openai.model,
                 // temperature: 0.9,
             },
             onMessage: (err, data) => {
@@ -296,9 +290,8 @@ export default class ChatBot extends ChatbotElement {
     private async _sendHandler(messages: Chatbot.OpenaiMessage[]) {
         this.setLoading(true);
 
-        const newMsg: Chatbot.Message = {
-            id: uuid(),
-            author: 'bot',
+        const newMsg: Chatbot.NewMessage = {
+            author: 'assistant',
             type: 'text',
             isThinking: true,
             data: {},
@@ -308,7 +301,7 @@ export default class ChatBot extends ChatbotElement {
         appState.addMessage(newMsg);
 
         if (this.customRequest) {
-            const data = await this.emit('chatbot:send', {
+            await this.emit('chatbot:send', {
                 detail: {
                     newMessage: newMsg,
                     messages,
@@ -316,10 +309,13 @@ export default class ChatBot extends ChatbotElement {
                 bubbles: true,
                 composed: true,
             });
-            this.setLoading(false);
-            return data;
+        } else {
+            try {
+                await this._sendToOpenai(newMsg, messages);
+            } catch (err) {
+                console.error(err);
+            }
         }
-        await this._sendToOpenai(newMsg, messages);
 
         this.setLoading(false);
     }
@@ -330,17 +326,22 @@ export default class ChatBot extends ChatbotElement {
         // add message to state
         appState.addMessage(detail as Chatbot.Message);
 
-        const messages = appState.messages.map((message) => {
-            return {
-                role: message.author,
-                content: message.data.text,
-            } as Chatbot.OpenaiMessage;
-        });
+        const messages = appState.messages
+            .filter((message) => {
+                return message.type === 'text';
+            })
+            .map((message) => {
+                return {
+                    role: message.author,
+                    content: message.data.text,
+                } as Chatbot.OpenaiMessage;
+            });
 
         // send message to bot
-        if (!this.customSendHandler) {
-            this._sendHandler([messages[messages.length - 1]]);
-        }
+        const sendMessages = appState.setting.useContext
+            ? messages
+            : [messages[messages.length - 1]];
+        this._sendHandler(sendMessages);
     }
 
     private _deleteMessageHandler(event: Event) {

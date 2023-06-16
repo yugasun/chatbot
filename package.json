@@ -2,7 +2,8 @@
   "name": "@yugasun/chatbot",
   "version": "0.1.1",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "description": "ChatBot is a chat robot, developed with web components. It can be used in any framework, such as Vue, React, Angular, etc.",
   "scripts": {

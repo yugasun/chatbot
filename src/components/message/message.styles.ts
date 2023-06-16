@@ -69,12 +69,12 @@ export default css`
         margin-left: 0.5rem;
     }
 
-    .bot-avatar {
+    .assistant-avatar {
         margin-right: 0.5rem;
     }
 
     .user-message,
-    .bot-message {
+    .assistant-message {
         padding: 0.5rem;
         max-width: calc(100% - 120px);
         word-wrap: break-word;
@@ -93,7 +93,7 @@ export default css`
         background-color: var(--primary-color);
         text-align: left;
     }
-    .bot-message {
+    .assistant-message {
         color: rgb(34, 34, 34);
         background-color: rgb(234, 234, 234);
     }

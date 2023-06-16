@@ -25,8 +25,8 @@ export class Message extends ChatbotElement {
     @property({ type: Object })
     message: Chatbot.Message;
 
-    @property()
-    type: 'user' | 'bot' = 'bot';
+    @property({ type: String })
+    type: Chatbot.MessageAuthor = 'assistant';
 
     // get all copy btns in the message
     @queryAll('.code-block-header__copy')
@@ -49,6 +49,13 @@ export class Message extends ChatbotElement {
                 this._addCopyEvents();
             });
         }
+    }
+
+    private get _isBot() {
+        return (
+            this.message.author === 'assistant' ||
+            this.message.author === 'system'
+        );
     }
 
     private _removeMessageHandler() {
@@ -88,7 +95,7 @@ export class Message extends ChatbotElement {
                 <div class="cb-message-row" part="cb-message-row">
                     <!-- message -->
                     ${when(
-                        this.message?.author === 'bot',
+                        this._isBot,
                         () => this.renderBotMessage(this.message),
                         () => this.renderUserMessage(this.message),
                     )}
@@ -114,18 +121,18 @@ export class Message extends ChatbotElement {
         </div>`;
     }
 
-    renderMessage(type: Chatbot.MessageAuthor, message: Chatbot.Message) {
+    renderMessage(message: Chatbot.Message) {
         return html`
             <div
                 class="
                     cb-message__content
                     markdown-body
-                    ${type}-message
+                    ${message.author}-message
                     message-type-${message.type}
                     ${message.isThinking ? 'thinking' : ''}
                     "
             >
-                ${this.renderButtons(type === 'bot' ? 'right' : 'left')}
+                ${this.renderButtons(this._isBot ? 'right' : 'left')}
                 ${this.renderMessageContent(message)}
             </div>
         `;
@@ -177,10 +184,10 @@ export class Message extends ChatbotElement {
     renderBotMessage(message: Chatbot.Message) {
         return html`
             <div class="cb-message" part="cb-message">
-                <sl-avatar class="avatar bot-avatar small" label="Bot">
+                <sl-avatar class="avatar assistant-avatar small" label="Bot">
                     <cb-icon slot="icon" svg="${BiRobot}"></cb-icon>
                 </sl-avatar>
-                ${this.renderMessage('bot', message)}
+                ${this.renderMessage(message)}
                 <div class="cb-message__blank">&nbsp;</div>
             </div>
         `;
@@ -190,7 +197,7 @@ export class Message extends ChatbotElement {
         return html`
             <div class="cb-message" part="cb-message">
                 <div class="cb-message__blank">&nbsp;</div>
-                ${this.renderMessage('user', message)}
+                ${this.renderMessage(message)}
                 <sl-avatar class="avatar user-avatar small" label="User">
                     <cb-icon slot="icon" svg="${BiPerson}"></cb-icon>
                 </sl-avatar>

@@ -84,14 +84,21 @@ export class SettingElement extends ChatbotElement {
                         ></sl-switch>
                     </div>
                     <div class="form-item">
-                        <label class="label">Context</label>
-                        <sl-input
+                        <label class="label">Use Context</label>
+                        <sl-switch
+                            class="item"
+                            label="Use Context"
+                            name="useContext"
+                            ?checked="${this.setting.useContext}"
+                            @sl-change=${this._checkChangeHandler}
+                        ></sl-switch>
+                        <!-- <sl-input
                             size="small"
                             type="number"
                             name="maxContextLength"
                             value=${this.setting.maxContextLength}
                             placeholder="Number of consecutive sessions"
-                        ></sl-input>
+                        ></sl-input> -->
                     </div>
                 </form>
 

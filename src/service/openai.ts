@@ -62,6 +62,10 @@ export async function chat(params: {
     if (!params.apiKey) {
         throw new Error('apiKey is required');
     }
+    const options = params.options ?? {};
+    if (!options.model) {
+        options.model = 'gpt-3.5-turbo';
+    }
     const response = await request.post(params.url, {
         json: {
             messages: params.messages,

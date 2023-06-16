@@ -10,7 +10,7 @@ const request = ky.extend({
     },
 });
 
-interface FetchStreamParams {
+interface FetchStreamParams extends RequestInit {
     onmessage?: (value: any) => void;
     onclose?: () => void;
 
@@ -34,6 +34,10 @@ export async function fetchStream(url: string, params: FetchStreamParams) {
             push(controller, reader);
         }
     };
+    // convert object body to json string
+    if (otherParams.body && typeof otherParams.body === 'object') {
+        otherParams.body = JSON.stringify(otherParams.body);
+    }
     return fetch(url, otherParams)
         .then((response: any) => {
             const reader = (response.body as ReadableStream).getReader();

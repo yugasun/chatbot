@@ -39,15 +39,15 @@
             </section>
         </div>
         <script type="module" src="/src/index.ts"></script>
-        <chat-bot
+        <chat-bot name="<%- title %>" stream> </chat-bot>
+        <!-- <chat-bot
             name="<%- title %>"
             stream
-            enable-markdown
+            custom-request
             enable-file-upload
             upload-file-url="http://localhost:8000/api/v1/file/upload"
         >
-            <h3>Loading...</h3>
-        </chat-bot>
+        </chat-bot> -->
 
         <script>
             window.addEventListener('load', () => {

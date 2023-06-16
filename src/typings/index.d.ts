@@ -1,6 +1,10 @@
+/// <reference types="unplugin-icons/types/raw" />
 declare namespace Chatbot {
+    type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+    type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
     type MessageType = 'text' | 'image' | 'video' | 'audio' | 'file' | 'emoji';
-    type MessageAuthor = 'user' | 'bot';
+    type MessageAuthor = 'user' | 'assistant' | 'system';
 
     interface OpenaiMessage {
         role: 'user' | 'system' | 'assistant';
@@ -32,8 +36,11 @@ declare namespace Chatbot {
     }
     interface Message {
         id: string;
+        timestamp: number;
         author: MessageAuthor;
         type: MessageType;
+        // bot reply message id (user message id)
+        replyId?: string;
         isThinking?: boolean;
         isUploading?: boolean;
         data: {
@@ -41,6 +48,8 @@ declare namespace Chatbot {
             files?: UploadFileItem[];
         };
     }
+
+    type NewMessage = PartialBy<Message, 'id' | 'timestamp'>;
 
     interface OpenAISetting {
         apiBase: string;
@@ -63,6 +72,8 @@ declare namespace Chatbot {
         enableUploadFile: boolean;
         // upload file url
         uploadFileUrl: string;
+        // whether use context, default: false
+        useContext: boolean;
         // max context length, default: 20
         maxContextLength: number;
         // openai setting
