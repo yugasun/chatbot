@@ -39,8 +39,13 @@
                 chat.
             </section>
         </div>
-        <chat-bot name="ChatBot" stream>
-            <h3>Loading...</h3>
+        <chat-bot
+            name="ChatBot"
+            stream
+            custom-request
+            enable-file-upload
+            upload-file-url="http://localhost:8000/api/v1/file/upload"
+        >
         </chat-bot>
 
         <script>
@@ -53,6 +58,7 @@
                     console.log(e.detail);
                     const { messages, newMessage } = e.detail;
                     if (!messages || !messages[0] || !newMessage) return;
+                    const lastMessage = messages[messages.length - 1];
                     chatBot.fetchStream(
                         `http://localhost:8000/api/v1/chat/qa`,
                         {
@@ -61,7 +67,7 @@
                                 accept: 'text/event-stream',
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({ text: messages[0].content }),
+                            body: JSON.stringify({ text: lastMessage.content }),
                             onmessage: (res) => {
                                 const data = chatBot.decodeStreamData(res);
                                 text += data;
