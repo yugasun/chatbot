@@ -29,6 +29,8 @@ ChatBot is a chat robot, developed with web components. It can be used in any fr
 
 ## Usage
 
+### For framework use (Vue, React, Angular, etc.)
+
 Install
 
 ```bash
@@ -48,6 +50,25 @@ To enable stream mode, you need to add the `stream` attribute to the `chat-bot` 
 
 ```html
 <chat-bot stream></chat-bot>
+```
+
+### For pure HTML use
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>ChatBot</title>
+        <script
+            type="module"
+            src="https://cdn.skypack.dev/@yugasun/chatbot"
+        ></script>
+    </head>
+    <body>
+        <chat-bot></chat-bot>
+    </body>
+</html>
 ```
 
 ## Develop

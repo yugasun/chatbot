@@ -1,13 +1,14 @@
 {
   "name": "@yugasun/chatbot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publishConfig": {
     "access": "public"
   },
   "description": "ChatBot is a chat robot, developed with web components. It can be used in any framework, such as Vue, React, Angular, etc.",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc",
+    "build": "vite build && tsc && pnpm run build:browser && pnpm run copy:dist",
+    "build:browser": "vite build -c vite.config.browser.ts",
     "copy:dist": "cp -r ./dist ./demo",
     "demo": "http-server demo -o",
     "lint": "pnpm run lint:lit-analyzer && pnpm run lint:eslint",
@@ -32,6 +33,7 @@
   ],
   "main": "dist/index.es.js",
   "module": "dist/index.es.js",
+  "browser": "dist/index.umd.js",
   "exports": {
     ".": "./dist/index.es.js",
     "./dist/*": "./dist/*"

@@ -6,8 +6,6 @@ import ViteInspector from 'vite-plugin-inspect';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import UnpluginIcons from 'unplugin-icons/vite';
 
-const customElementName = 'chat-bot';
-
 // https://vitejs.dev/config/
 export default ({ mode }) => {
     process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
@@ -15,23 +13,20 @@ export default ({ mode }) => {
     return defineConfig({
         build: {
             cssCodeSplit: false,
+            emptyOutDir: false,
             lib: {
                 entry: path.resolve(__dirname, 'src/index.ts'),
-                name: customElementName,
+                name: 'ChatBot',
                 fileName: (format) => `index.${format}.js`,
-                formats: ['es'],
+                formats: ['umd'],
             },
             rollupOptions: {
-                external: [
-                    /^lit/,
-                    /^@shoelace-style\/shoelace/,
-                    /^markdown-it/,
-                    /^highlight.js/,
-                ],
                 output: {
-                    name: 'ChatBot',
-                    exports: 'default',
                     assetFileNames: 'index.[ext]',
+                    format: 'umd',
+                    inlineDynamicImports: true,
+                    interop: 'esModule',
+                    exports: 'named',
                 },
             },
         },

@@ -6,8 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>ChatBot</title>
         <link rel="stylesheet" href="./dist/index.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.1/markdown-it.min.js"></script>
-        <script type="module" src="./dist/index.es.js"></script>
+        <script src="./dist/index.umd.js"></script>
         <style>
             * {
                 margin: 0;
@@ -40,55 +39,6 @@
                 chat.
             </section>
         </div>
-        <chat-bot
-            name="ChatBot"
-            stream
-            custom-request
-            enable-file-upload
-            upload-file-url="http://localhost:8000/api/v1/file/upload"
-        >
-            <h3>Loading...</h3>
-        </chat-bot>
-
-        <script>
-            window.addEventListener('load', () => {
-                const chatBot = document.querySelector('chat-bot');
-                const chatBotState = chatBot.store.state;
-
-                let text = '';
-                chatBot.addEventListener('chatbot:send', (e) => {
-                    console.log(e.detail);
-                    const { messages, newMessage } = e.detail;
-                    if (!messages || !messages[0] || !newMessage) return;
-                    chatBot.fetchStream(
-                        `http://localhost:8000/api/v1/chat/qa`,
-                        {
-                            method: 'POST',
-                            headers: {
-                                accept: 'text/event-stream',
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ text: messages[0].content }),
-                            onmessage: (res) => {
-                                const data = chatBot.decodeStreamData(res);
-                                text += data;
-                                /*
-                            // add to chatbot message
-                            */
-                                chatBotState.updateMessage(newMessage, text);
-                            },
-                            onclose: () => {
-                                console.log('close', text);
-                                text = '';
-                            },
-                        },
-                    );
-                });
-
-                chatBot.addEventListener('chatbot:send:file', (e) => {
-                    console.log(e.detail);
-                });
-            });
-        </script>
+        <chat-bot name="ChatBot" stream> </chat-bot>
     </body>
 </html>
