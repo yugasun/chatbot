@@ -17,7 +17,7 @@ export class Icon extends LitElement {
     svg = '';
 
     render() {
-        return html`<span class="cb-icon color-${this.color}"
+        return html`<span class="cb-icon color-${this.color}" part="base"
             >${unsafeHTML(this.svg)}</span
         >`;
     }

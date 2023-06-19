@@ -110,4 +110,8 @@ export default css`
         padding: 0;
         margin: 0;
     }
+
+    cb-icon::part(base) {
+        font-size: 1em;
+    }
 `;

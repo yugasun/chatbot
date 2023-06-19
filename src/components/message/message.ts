@@ -116,7 +116,10 @@ export class Message extends ChatbotElement {
                 variant="text"
                 size="small"
             >
-                <cb-icon svg="${BiTrash}" style="font-size: 1em"></cb-icon>
+                <cb-icon
+                    svg="${BiTrash}"
+                    style="font-size: 1em !important;"
+                ></cb-icon>
             </sl-button>
         </div>`;
     }
