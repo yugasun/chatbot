@@ -56,13 +56,14 @@ To enable stream mode, you need to add the `stream` attribute to the `chat-bot` 
     <head>
         <meta charset="UTF-8" />
         <title>ChatBot</title>
-        <script
-            type="module"
-            src="https://cdn.skypack.dev/@yugasun/chatbot"
-        ></script>
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/@yugasun/chatbot/dist/index.css"
+        />
+        <script src="https://unpkg.com/@yugasun/chatbot/dist/index.umd.js"></script>
     </head>
     <body>
-        <chat-bot></chat-bot>
+        <chat-bot stream></chat-bot>
     </body>
 </html>
 ```
