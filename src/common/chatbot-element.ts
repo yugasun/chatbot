@@ -22,6 +22,8 @@ import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 // spinner
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
+// alert
+import '@shoelace-style/shoelace/dist/components/alert/alert.js';
 
 type EventTypeRequiresDetail<T> = T extends keyof GlobalEventHandlersEventMap
     ? GlobalEventHandlersEventMap[T] extends CustomEvent<

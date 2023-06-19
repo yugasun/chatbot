@@ -20,7 +20,7 @@ export class AnchorElement extends ChatbotElement {
     // handler click
     private _clickHandler() {
         const isOpen = this.open ? false : true;
-        this.emit('toggle:open', {
+        this.emit('chatbot:toggle', {
             detail: {
                 open: isOpen,
             },
@@ -45,8 +45,16 @@ export class AnchorElement extends ChatbotElement {
                 >
                     ${when(
                         this.open,
-                        () => html`<cb-icon svg="${BiXLg}"></cb-icon>`,
-                        () => html`<cb-icon svg="${BiChatDotsFill}"></cb-icon>`,
+                        () =>
+                            html`<cb-icon
+                                color="white"
+                                svg="${BiXLg}"
+                            ></cb-icon>`,
+                        () =>
+                            html`<cb-icon
+                                color="white"
+                                svg="${BiChatDotsFill}"
+                            ></cb-icon>`,
                     )}
                 </sl-button>
             </div>

@@ -1,31 +1,27 @@
 # ChatBot
 
+[![npm](https://img.shields.io/npm/v/@yugasun/chatbot)](https://www.npmjs.com/)
+![GitHub Repo stars](https://img.shields.io/github/stars/yugasun/chatbot?style=social)
 [![Lit](https://img.shields.io/badge/Framework-Lit-5865f2)](https://lit.dev/)
 [![TypeScript](https://img.shields.io/badge/Language-TypeScript-blue)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Develop-Vite-747bff)](https://vitejs.dev)
 [![Build](https://github.com/yugasun/chatbot/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/yugasun/chatbot/actions/workflows/deploy.yml)
 
-ChatBot is a chat robot, developed with web components. It can be used in any framework, such as Vue, React, Angular, etc.
+ChatBot is a chat robot that simplifies the usage of chat GPT tools like ChatGPT, and can be integrated into any framework (e.g., Vue, React, Angular) for easy implementation.
 
 ## Feature
 
--   [x] [Lit Element](https://lit.dev/)
--   [x] 🌟 [Shoelace Web components](https://shoelace.style/)
--   [x] [TypeScript](https://www.typescriptlang.org/)
--   [x] [Vite](https://vitejs.dev/) Next Generation Frontend Tooling
--   [ ] 🎨 [UnoCSS](https://github.com/antfu/unocss) - the instant on-demand atomic CSS engine (**Need bugfix for build version**)
+-   [x] 🚀 Can be used in any framework, such as Vue, React, Angular, etc.
+-   [x] 🌟 Works with CDNs
+-   [x] 🎨 Customizable style
+-   [x] 🍺 Type safe with TypeScript
 -   [ ] 🌍 I18n ready
--   [x] [ESLint](https://eslint.org/)
--   [x] [Prettier](https://prettier.io/)
--   [x] [Airbnb Style Guide](https://github.com/airbnb/javascript)
--   [x] [Commitlint](https://github.com/conventional-changelog/commitlint) Lint commit messages
--   [x] [Commitizen](https://github.com/commitizen/cz-cli) The commitizen command line utility.
 
 ## Demo
 
-[Live Demo](https://chatbot.yugasun.com/)
+[Live Demo](https://chatbot-yugasun.vercel.app/)
 
-<img src="./demo/chatbot-demo.png" alt="chatbot" width="400"/>
+<img src="./demo/chatbot.png" alt="chatbot" width="400"/>
 
 ## Usage
 

@@ -27,6 +27,12 @@ export default css`
         animation: fadeIn 0.3s ease-in-out;
     }
 
+    .cb-alert-box {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 5px 10px;
+    }
+
     @keyframes fadeIn {
         from {
             opacity: 0;

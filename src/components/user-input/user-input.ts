@@ -33,6 +33,10 @@ export class UserInput extends ChatbotElement {
     @property({ type: Boolean })
     loading = false;
 
+    // disabled flag
+    @property({ type: Boolean })
+    disabled = false;
+
     // current key
     @property({ type: String })
     currentKey = '';
@@ -75,57 +79,60 @@ export class UserInput extends ChatbotElement {
 
     render() {
         return html`
-            <div class="user-input-wrapper" part="user-input-wrapper">
+            <div class="cb-user-input-wrapper" part="user-input-wrapper">
                 <sl-textarea
                     @sl-input=${this._inputChangeHandler}
                     placeholder=${this.placeholder}
-                    class="user-input"
+                    class="cb-user-input"
                     clearable="true"
                     value=${this.value}
                     rows="1"
                     resize="auto"
                     filled
+                    ?disabled=${this.disabled}
                     enterkeyhint="send"
                     @keydown=${this._keyDownHandler}
                 ></sl-textarea>
 
-                ${when(
-                    this.enableFileUpload,
-                    () => html`
-                        <sl-button
-                            @click=${this._sendFileHandler}
-                            name="paperclip"
-                            label="Attachment"
-                            size="large"
-                            class="paperclip-button"
-                            variant="text"
-                            circle
-                        >
-                            <cb-icon svg="${BiPaperclip}"></cb-icon>
-                            <!-- select file input -->
-                            <input
-                                type="file"
-                                id="file"
-                                name="file"
-                                class="file-input"
-                            />
-                        </sl-button>
-                    `,
-                    () => html``,
-                )}
-                <sl-button
-                    @click=${this._sendHandler}
-                    name="send"
-                    label="Send"
-                    size="small"
-                    class="send-button"
-                    variant="text"
-                    ?disabled=${this.value.length === 0}
-                    ?loading=${this.loading}
-                    circle
-                >
-                    <cb-icon svg="${BiSend}"></cb-icon>
-                </sl-button>
+                <span class="cb-input-buttons">
+                    ${when(
+                        this.enableFileUpload,
+                        () => html`
+                            <sl-button
+                                @click=${this._sendFileHandler}
+                                name="paperclip"
+                                label="Attachment"
+                                size="large"
+                                class="paperclip-button"
+                                variant="text"
+                                circle
+                            >
+                                <cb-icon svg="${BiPaperclip}"></cb-icon>
+                                <!-- select file input -->
+                                <input
+                                    type="file"
+                                    id="file"
+                                    name="file"
+                                    class="file-input"
+                                />
+                            </sl-button>
+                        `,
+                        () => html``,
+                    )}
+                    <sl-button
+                        @click=${this._sendHandler}
+                        name="send"
+                        label="Send"
+                        size="small"
+                        class="send-button"
+                        variant="text"
+                        ?disabled=${this.value.length === 0}
+                        ?loading=${this.loading}
+                        circle
+                    >
+                        <cb-icon svg="${BiSend}"></cb-icon>
+                    </sl-button>
+                </span>
             </div>
         `;
     }

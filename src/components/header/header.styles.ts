@@ -28,7 +28,7 @@ export default css`
     .cb-header {
         display: flex;
         flex-direction: row;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
         position: relative;
     }
@@ -37,9 +37,7 @@ export default css`
         justify-items: center;
     }
 
-    .setting-button {
-        position: absolute;
-        right: 0px;
+    .cb-setting-button {
         font-size: 1.5rem;
         color: white;
     }

@@ -1,14 +1,17 @@
 import { StateController } from '@lit-app/state';
 import { PropertyValueMap, html } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
 
 import styles from './styles/app.styles';
+import './components/common/icon/icon';
 import './components/header/header';
 import './components/footer/footer';
 import './components/message-list/message-list';
 import './components/user-input/user-input';
 import './components/setting/setting';
 import './components/anchor/anchor';
+import './components/auth/auth-alert';
 import './components/common/thinking/thinking';
 
 import { appState } from './store/app.state';
@@ -17,6 +20,7 @@ import { ChatbotElement } from './common/chatbot-element';
 import * as openai from './service/openai';
 import { fetchStream } from './utils/request';
 import { uploadFile } from './service/server';
+import { notify } from './utils/message';
 
 @customElement('chat-bot')
 export default class ChatBot extends ChatbotElement {
@@ -75,6 +79,10 @@ export default class ChatBot extends ChatbotElement {
     @property({ type: Boolean })
     showSetting = false;
 
+    // show auth alert
+    @property({ type: Boolean })
+    showAuthAlert = false;
+
     @query('cb-message-list')
     private _messageList: HTMLElement;
 
@@ -88,25 +96,31 @@ export default class ChatBot extends ChatbotElement {
 
     render() {
         return html`
-            ${this.open
-                ? html`<div class="cb-wrapper">
-                      <cb-header title="${this.name}"></cb-header>
-                      <cb-message-list
-                          .messages=${appState.messages}
-                      ></cb-message-list>
-                      <cb-setting
-                          ?open=${this.showSetting}
-                          .setting=${appState.setting}
-                      ></cb-setting>
-                      <cb-user-input
-                          ?loading=${this.loading}
-                          ?enable-file-upload=${this.enableFileUpload}
-                      ></cb-user-input>
-                      ${this.displayLicense
-                          ? html`<cb-footer></cb-footer>`
-                          : ''}
-                  </div>`
-                : ``}
+            ${when(
+                this.open,
+                () => html` <div class="cb-wrapper">
+                    <cb-header title="${this.name}"></cb-header>
+                    <div class="cb-alert-box">
+                        ${this.showAuthAlert
+                            ? html`<cb-auth-alert></cb-auth-alert>`
+                            : ''}
+                    </div>
+                    <cb-message-list
+                        .messages=${appState.messages}
+                    ></cb-message-list>
+                    <cb-setting
+                        ?open=${this.showSetting}
+                        .setting=${appState.setting}
+                    ></cb-setting>
+                    <cb-user-input
+                        ?loading=${this.loading}
+                        ?disabled=${this.loading || this.showAuthAlert}
+                        ?enable-file-upload=${this.enableFileUpload}
+                    ></cb-user-input>
+                    ${this.displayLicense ? html`<cb-footer></cb-footer>` : ''}
+                </div>`,
+                () => null,
+            )}
             <cb-anchor ?open=${this.open}></cb-anchor>
         `;
     }
@@ -140,7 +154,7 @@ export default class ChatBot extends ChatbotElement {
         });
 
         // listen toggle open
-        addEventListener('toggle:open', (event: Event) => {
+        addEventListener('chatbot:toggle', (event: Event) => {
             const detail = (event as CustomEvent).detail;
             this.open = detail.open;
         });
@@ -152,80 +166,10 @@ export default class ChatBot extends ChatbotElement {
 
         // listen send file
         addEventListener('message:send:file', this._sendFileHandler.bind(this));
-    }
 
-    private async _sendFileHandler(event: Event) {
-        const detail = (event as CustomEvent).detail as {
-            files: File[];
-        };
-
-        // add file message
-        const uploadFileInfos = detail.files.map((file, index) => {
-            return {
-                id: `${file.name}-${index}`,
-                name: file.name,
-                size: file.size,
-                type: file.type,
-                url: '',
-            };
-        });
-        const newMsg: Chatbot.NewMessage = {
-            author: 'user',
-            type: 'file',
-            isUploading: true,
-            data: {
-                files: uploadFileInfos,
-            },
-        };
-
-        appState.addMessage(newMsg);
-
-        if (this.uploadFileUrl) {
-            // upload file to server
-            const res = await uploadFile(this.uploadFileUrl, detail.files);
-            if (res.code === 0 && res.data) {
-                newMsg.isUploading = false;
-                newMsg.data = {
-                    files: res.data,
-                };
-
-                appState.updateMessage(newMsg);
-            }
-        }
-
-        this.emit('chatbot:file:send', {
-            detail: {
-                files: detail.files,
-                message: newMsg,
-            },
-        });
-    }
-
-    // initialize setting
-    private _initSetting() {
-        const setting = appState.setting;
-        setting.stream = this.stream;
-        setting.customRequest = this.customRequest;
-        setting.enableUploadFile = this.enableFileUpload;
-        setting.uploadFileUrl = this.uploadFileUrl;
-
-        appState.setSetting(setting);
-    }
-
-    // setting confirm handler
-    private _settingConfirmHandler(event: Event) {
-        const detail = (event as CustomEvent).detail;
-        appState.setSetting(detail.setting);
-        this.showSetting = false;
-    }
-
-    // scroll to bottom
-    private _scrollToBottom(smooth = false) {
-        requestIdleCallback(() => {
-            this._messageList?.scrollTo({
-                top: this._messageList.scrollHeight,
-                behavior: smooth ? 'smooth' : 'auto',
-            });
+        // listen show setting
+        addEventListener('setting:show', () => {
+            this.showSetting = true;
         });
     }
 
@@ -239,6 +183,10 @@ export default class ChatBot extends ChatbotElement {
         // init setting
         this._initSetting();
 
+        if (!this.customRequest) {
+            this._checkAuth();
+        }
+
         setTimeout(() => {
             this._scrollToBottom();
         }, 0);
@@ -246,6 +194,18 @@ export default class ChatBot extends ChatbotElement {
 
     public setLoading(val: boolean) {
         this.loading = val;
+    }
+
+    // fetch sse stream
+    public fetchStream = fetchStream;
+
+    // check auth
+    private _checkAuth() {
+        if (!appState.setting.openai.apiKey) {
+            this.showAuthAlert = true;
+        } else {
+            this.showAuthAlert = false;
+        }
     }
 
     // send to openai
@@ -313,6 +273,7 @@ export default class ChatBot extends ChatbotElement {
             try {
                 await this._sendToOpenai(newMsg, messages);
             } catch (err) {
+                notify('error', (err as Error).message);
                 console.error(err);
             }
         }
@@ -349,8 +310,83 @@ export default class ChatBot extends ChatbotElement {
         appState.removeMessage(detail.id);
     }
 
-    // fetch sse stream
-    public fetchStream = fetchStream;
+    private async _sendFileHandler(event: Event) {
+        const detail = (event as CustomEvent).detail as {
+            files: File[];
+        };
+
+        // add file message
+        const uploadFileInfos = detail.files.map((file, index) => {
+            return {
+                id: `${file.name}-${index}`,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                url: '',
+            };
+        });
+        const newMsg: Chatbot.NewMessage = {
+            author: 'user',
+            type: 'file',
+            isUploading: true,
+            data: {
+                files: uploadFileInfos,
+            },
+        };
+
+        appState.addMessage(newMsg);
+
+        if (this.uploadFileUrl) {
+            // upload file to server
+            const res = await uploadFile(this.uploadFileUrl, detail.files);
+            if (res.code === 0 && res.data) {
+                newMsg.isUploading = false;
+                newMsg.data = {
+                    files: res.data,
+                };
+
+                appState.updateMessage(newMsg);
+            }
+        }
+
+        this.emit('chatbot:file:send', {
+            detail: {
+                files: detail.files,
+                message: newMsg,
+            },
+        });
+    }
+
+    // initialize setting
+    private _initSetting() {
+        const setting = appState.setting;
+        setting.stream = this.stream;
+        setting.customRequest = this.customRequest;
+        setting.enableUploadFile = this.enableFileUpload;
+        setting.uploadFileUrl = this.uploadFileUrl;
+
+        appState.setSetting(setting);
+    }
+
+    // setting confirm handler
+    private _settingConfirmHandler(event: Event) {
+        const detail = (event as CustomEvent).detail;
+        appState.setSetting(detail.setting);
+        this.showSetting = false;
+
+        // check auth
+        this._checkAuth();
+    }
+
+    // scroll to bottom
+    private _scrollToBottom(smooth = false) {
+        requestIdleCallback(() => {
+            this._messageList?.scrollTo({
+                top: this._messageList.scrollHeight,
+                behavior: smooth ? 'smooth' : 'auto',
+            });
+        });
+    }
 }
 
 declare global {

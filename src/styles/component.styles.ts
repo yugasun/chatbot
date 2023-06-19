@@ -29,4 +29,34 @@ export default css`
     .color-default {
         color: var(--sl-color-neutral-600);
     }
+
+    .color-primary {
+        color: var(--sl-color-primary-600);
+    }
+
+    .color-success,
+    .color-green {
+        color: var(--sl-color-success-600);
+    }
+
+    .color-warning {
+        color: var(--sl-color-warning-600);
+    }
+
+    .color-danger,
+    .color-error {
+        color: var(--sl-color-danger-600);
+    }
+
+    .color-default {
+        color: var(--sl-color-neutral-600);
+    }
+
+    .text-button {
+        cursor: pointer;
+    }
+
+    .text-button:hover {
+        text-decoration: underline;
+    }
 `;

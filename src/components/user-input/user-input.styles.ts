@@ -14,14 +14,14 @@ export default css`
         border-radius-bottom-right: 6px;
     }
 
-    .user-input-wrapper {
+    .cb-user-input-wrapper {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
     }
 
-    .user-input {
+    .cb-user-input {
         flex: 1;
     }
 
@@ -39,5 +39,9 @@ export default css`
         width: 100%;
         height: 100%;
         position: absolute;
+    }
+
+    .cb-input-buttons {
+        padding: 0 5px;
     }
 `;

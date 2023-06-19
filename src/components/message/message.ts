@@ -185,7 +185,11 @@ export class Message extends ChatbotElement {
         return html`
             <div class="cb-message" part="cb-message">
                 <sl-avatar class="avatar assistant-avatar small" label="Bot">
-                    <cb-icon slot="icon" svg="${BiRobot}"></cb-icon>
+                    <cb-icon
+                        slot="icon"
+                        svg="${BiRobot}"
+                        color="white"
+                    ></cb-icon>
                 </sl-avatar>
                 ${this.renderMessage(message)}
                 <div class="cb-message__blank">&nbsp;</div>
@@ -199,7 +203,11 @@ export class Message extends ChatbotElement {
                 <div class="cb-message__blank">&nbsp;</div>
                 ${this.renderMessage(message)}
                 <sl-avatar class="avatar user-avatar small" label="User">
-                    <cb-icon slot="icon" svg="${BiPerson}"></cb-icon>
+                    <cb-icon
+                        slot="icon"
+                        svg="${BiPerson}"
+                        color="white"
+                    ></cb-icon>
                 </sl-avatar>
             </div>
         `;
