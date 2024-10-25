@@ -5,7 +5,6 @@ import { ChatbotElement } from '../../common/chatbot-element';
 import './clear-message.dialog';
 
 import '../common/icon/icon.js';
-import BiXLg from '~icons/bi/x-lg';
 
 import styles from './setting.styles';
 
@@ -54,7 +53,7 @@ export class SettingElement extends ChatbotElement {
                             Clear
                         </sl-button>
                     </div>
-                    <!-- <div class="form-item">
+                    <div class="form-item">
                         <label class="label"> Custom Request </label>
 
                         <sl-switch
@@ -66,12 +65,8 @@ export class SettingElement extends ChatbotElement {
                         >
                             Enable it for your own backend.
                         </sl-switch>
-                    </div> -->
-                    ${when(
-                        this.customRequest,
-                        () => null,
-                        () => this.renderInternalServices(),
-                    )}
+                    </div>
+                    ${this.renderInternalServices(this.customRequest)}
 
                     <div class="form-item">
                         <label class="label">Streaming</label>
@@ -126,7 +121,7 @@ export class SettingElement extends ChatbotElement {
         `;
     }
 
-    renderInternalServices() {
+    renderInternalServices(isCustomRequest = false) {
         return html`
             <div class="form-item">
                 <label class="label">Service</label>
@@ -134,18 +129,22 @@ export class SettingElement extends ChatbotElement {
                     <sl-radio-button value="openai">OpenAI</sl-radio-button>
                 </sl-radio-group>
             </div>
+            ${when(
+                isCustomRequest,
+                () => null,
+                () => html` <div class="form-item">
+                    <label class="label">API Key</label>
+                    <sl-input
+                        autofocus
+                        size="small"
+                        name="openai.apiKey"
+                        value=${this.setting.openai.apiKey}
+                        placeholder="Please input api key for openai"
+                        @sl-change=${this._inputChangeHandler}
+                    ></sl-input>
+                </div>`,
+            )}
 
-            <div class="form-item">
-                <label class="label">API Key</label>
-                <sl-input
-                    autofocus
-                    size="small"
-                    name="openai.apiKey"
-                    value=${this.setting.openai.apiKey}
-                    placeholder="Please input api key for openai"
-                    @sl-change=${this._inputChangeHandler}
-                ></sl-input>
-            </div>
             <div class="form-item">
                 <label class="label">API Base</label>
                 <sl-input
@@ -154,6 +153,17 @@ export class SettingElement extends ChatbotElement {
                     name="openai.apiBase"
                     value=${this.setting.openai.apiBase}
                     placeholder="Please input api base for openai"
+                    @sl-change=${this._inputChangeHandler}
+                ></sl-input>
+            </div>
+            <div class="form-item">
+                <label class="label">Model</label>
+                <sl-input
+                    autofocus
+                    size="small"
+                    name="openai.model"
+                    value=${this.setting.openai.model}
+                    placeholder="Please input model for openai"
                     @sl-change=${this._inputChangeHandler}
                 ></sl-input>
             </div>

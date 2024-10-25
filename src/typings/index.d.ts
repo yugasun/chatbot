@@ -54,6 +54,7 @@ declare namespace Chatbot {
     interface OpenAISetting {
         apiBase: string;
         apiKey: string;
+        model?: string;
         maxTokens?: number;
         temperature?: number;
         topP?: number;
